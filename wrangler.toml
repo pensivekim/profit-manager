@@ -1,7 +1,7 @@
 name = "profit-manager"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".next"
+pages_build_output_dir = ".vercel/output/static"
 
 [vars]
 # All secrets managed via: npx wrangler pages secret put <KEY> --project-name profit-manager
