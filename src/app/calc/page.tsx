@@ -157,7 +157,6 @@ export default function CalcPage() {
             className="w-full rounded-lg border border-border px-4 py-3 text-right text-base outline-none"
             style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>원</span>
         </div>
         <div className="flex justify-between mt-1">
           {actualPct !== null ? (

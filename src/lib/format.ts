@@ -8,7 +8,6 @@ export function fmtKRW(n: number): string {
   const abs = Math.abs(n);
   const sign = n < 0 ? '-' : '';
   if (abs >= 100000000) return sign + (abs / 100000000).toFixed(1) + '억원';
-  if (abs >= 10000000) return sign + (abs / 10000000).toFixed(1) + '천만원';
   if (abs >= 10000) return sign + fmtComma(Math.round(abs / 10000)) + '만원';
   return sign + fmtComma(abs) + '원';
 }
