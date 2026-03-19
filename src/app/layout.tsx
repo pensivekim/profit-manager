@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "내 손에 얼마 남았나? - 소상공인 실수령액 계산기",
-  description: "매출에서 세금, 보험, 원가를 빼고 진짜 내 손에 남는 돈을 계산합니다",
+  title: "사장님의 경영 파트너 - 소상공인 실수령액 계산기",
+  description: "매출에서 세금, 보험, 원가를 빼고 진짜 내 손에 남는 돈을 계산합니다. AI 경영 조언과 전문가 연결까지.",
 };
 
 export default function RootLayout({

@@ -1,293 +1,122 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { BENCHMARKS, BizType } from '@/lib/benchmarks';
-import { fmtComma } from '@/lib/format';
-import ResultSummary from '@/components/ResultSummary';
-import CostBars from '@/components/CostBars';
-import TaxDetail from '@/components/TaxDetail';
-import ProCards from '@/components/ProCards';
-import AIAdvice from '@/components/AIAdvice';
-import TabNav from '@/components/TabNav';
-import ConsultModal from '@/components/ConsultModal';
+import { useMemo } from 'react';
+import Link from 'next/link';
+import { getTodayQuote, getTodayTip, getGreeting, getTodayDate } from '@/lib/daily';
 
-const BIZ_OPTIONS: { value: BizType; label: string }[] = [
-  { value: 'beauty', label: '미용실/뷰티' },
-  { value: 'restaurant', label: '식당/카페' },
-  { value: 'retail', label: '소매/편의점' },
-  { value: 'manufacture', label: '제조/공방' },
-  { value: 'service', label: '서비스/학원/세탁' },
-];
-
-interface CalcResult {
-  opCost: number;
-  opProfit: number;
-  vatProvision: number;
-  empWage: number;
-  insuranceCost: number;
-  monthlyIncomeTax: number;
-  totalTax: number;
-  finalProfit: number;
-  totalHours: number;
-  hourlyWage: number;
-  rentPct: number;
-  laborPct: number;
-  materialPct: number;
-  otherPct: number;
-  [key: string]: number;
-}
-
-export default function Home() {
-  const [bizType, setBizType] = useState<BizType>('restaurant');
-  const [taxType, setTaxType] = useState<'general' | 'simplified'>('general');
-  const [revenue, setRevenue] = useState(20000000);
-  const [costRent, setCostRent] = useState(0);
-  const [costLabor, setCostLabor] = useState(0);
-  const [costMaterial, setCostMaterial] = useState(0);
-  const [costOther, setCostOther] = useState(0);
-  const [empCount, setEmpCount] = useState(1);
-  const [workDays, setWorkDays] = useState(25);
-  const [workHours, setWorkHours] = useState(10);
-  const [result, setResult] = useState<CalcResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [consultModal, setConsultModal] = useState<{ proType: string; proLabel: string } | null>(null);
-
-  useEffect(() => {
-    const bm = BENCHMARKS[bizType];
-    setCostRent(Math.round(revenue * bm.rent / 100));
-    setCostLabor(Math.round(revenue * bm.labor / 100));
-    setCostMaterial(Math.round(revenue * bm.material / 100));
-    setCostOther(Math.round(revenue * bm.other / 100));
-  }, [bizType, revenue]);
-
-  const handleCalc = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/calc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bizType, taxType, revenue,
-          costRent, costLabor, costMaterial, costOther,
-          empCount, workDays, workHours,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) {
-        alert(data.error);
-        return;
-      }
-      setResult(data);
-      setActiveTab('overview');
-    } catch {
-      alert('서버 오류가 발생했습니다');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const numInput = (
-    label: string,
-    value: number,
-    onChange: (v: number) => void,
-    suffix = '원',
-    step = 100000,
-  ) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
-      <div className="relative">
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          step={step}
-          className="w-full rounded-lg border border-gray-200 px-4 py-3 text-right text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
-        />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">
-          {suffix}
-        </span>
-      </div>
-      <p className="text-xs text-gray-400 mt-1 text-right">{fmtComma(value)}원</p>
-    </div>
-  );
-
-  const adviceCalcResult = result ? {
-    ...result,
-    costRent,
-    costLabor,
-    costMaterial,
-    costOther,
-  } : null;
+export default function LandingPage() {
+  const greeting = useMemo(() => getGreeting(), []);
+  const dateStr = useMemo(() => getTodayDate(), []);
+  const quote = useMemo(() => getTodayQuote(), []);
+  const tip = useMemo(() => getTodayTip(), []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-4 py-8 pb-24 sm:pb-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">
-            내 손에 얼마 남았나?
-          </h1>
-          <p className="text-sm text-gray-500 mt-2">
-            소상공인 실수령액 계산기
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-white to-blue-50">
+      <div className="max-w-lg mx-auto px-4 py-6">
+
+        {/* Top Bar */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <p className="text-xs text-gray-400">{dateStr}</p>
+            <h1 className="text-lg font-bold text-gray-800 mt-0.5">{greeting}</h1>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-2xl">
+            {"\uD83D\uDCB0"}
+          </div>
+        </div>
+
+        {/* Today's Quote */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100 mb-4">
+          <p className="text-xs text-amber-600 font-semibold mb-2">{"\u2728"} 오늘의 한마디</p>
+          <p className="text-gray-800 font-medium leading-relaxed text-lg">
+            &ldquo;{quote.text}&rdquo;
           </p>
+          <p className="text-xs text-gray-400 mt-2 text-right">- {quote.author}</p>
         </div>
 
-        {/* Input Form */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">업종</label>
-            <select
-              value={bizType}
-              onChange={(e) => setBizType(e.target.value as BizType)}
-              className="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white"
-            >
-              {BIZ_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">과세유형</label>
-            <div className="grid grid-cols-2 gap-2">
-              {(['general', 'simplified'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTaxType(t)}
-                  className={`py-2.5 rounded-lg text-sm font-medium transition-all ${
-                    taxType === t
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {t === 'general' ? '일반과세자' : '간이과세자'}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {numInput('월 매출', revenue, setRevenue)}
-
-          <div className="pt-2 border-t border-gray-100">
-            <p className="text-sm font-semibold text-gray-700 mb-3">월 지출 (원가)</p>
-            <div className="grid grid-cols-2 gap-3">
-              {numInput('임대료', costRent, setCostRent)}
-              {numInput('인건비', costLabor, setCostLabor)}
-              {numInput('재료/매입', costMaterial, setCostMaterial)}
-              {numInput('기타경비', costOther, setCostOther)}
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-gray-100">
-            <div className="grid grid-cols-3 gap-3">
-              {numInput('직원 수', empCount, setEmpCount, '명', 1)}
-              {numInput('월 근무일', workDays, setWorkDays, '일', 1)}
-              {numInput('일 근무시간', workHours, setWorkHours, '시간', 1)}
-            </div>
-          </div>
-
-          <button
-            onClick={handleCalc}
-            disabled={loading}
-            className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <Link
+            href="/calc"
+            className="bg-blue-600 text-white rounded-2xl p-5 shadow-sm hover:bg-blue-700 transition-colors group"
           >
-            {loading ? '계산 중...' : '계산하기'}
-          </button>
+            <span className="text-3xl block mb-2">{"\uD83E\uDDEE"}</span>
+            <span className="font-bold text-base">실수령액 계산</span>
+            <span className="block text-blue-200 text-xs mt-1">내 손에 얼마 남을까?</span>
+          </Link>
+          <Link
+            href="/history"
+            className="bg-emerald-600 text-white rounded-2xl p-5 shadow-sm hover:bg-emerald-700 transition-colors group"
+          >
+            <span className="text-3xl block mb-2">{"\uD83D\uDCCA"}</span>
+            <span className="font-bold text-base">월별 추이</span>
+            <span className="block text-emerald-200 text-xs mt-1">지난달보다 나아졌을까?</span>
+          </Link>
         </div>
 
-        {/* Results with Tabs */}
-        {result && (
-          <>
-            <div className="mt-6">
-              <ResultSummary
-                finalProfit={result.finalProfit}
-                hourlyWage={result.hourlyWage}
-                totalHours={result.totalHours}
-                revenue={revenue}
-              />
-            </div>
+        {/* Today's Tip */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-blue-100 mb-4">
+          <p className="text-xs text-blue-600 font-semibold mb-2">{"\uD83D\uDCA1"} 오늘의 경영 팁</p>
+          <p className="font-bold text-gray-800 mb-1">{tip.title}</p>
+          <p className="text-sm text-gray-600 leading-relaxed">{tip.body}</p>
+        </div>
 
-            <div className="mt-4">
-              <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
-            </div>
-
-            <div className="mt-4 sm:mt-0">
-              {activeTab === 'overview' && (
-                <CostBars
-                  bizType={bizType}
-                  rentPct={result.rentPct}
-                  laborPct={result.laborPct}
-                  materialPct={result.materialPct}
-                  otherPct={result.otherPct}
-                  costRent={costRent}
-                  costLabor={costLabor}
-                  costMaterial={costMaterial}
-                  costOther={costOther}
-                />
-              )}
-
-              {activeTab === 'tax' && (
-                <TaxDetail
-                  vatProvision={result.vatProvision}
-                  monthlyIncomeTax={result.monthlyIncomeTax}
-                  insuranceCost={result.insuranceCost}
-                  totalTax={result.totalTax}
-                  taxType={taxType}
-                />
-              )}
-
-              {activeTab === 'ai' && adviceCalcResult && (
-                <AIAdvice
-                  calcResult={adviceCalcResult}
-                  bizType={bizType}
-                  taxType={taxType}
-                  revenue={revenue}
-                  empCount={empCount}
-                  autoFetch={activeTab === 'ai'}
-                  onProLink={setActiveTab}
-                />
-              )}
-
-              {activeTab === 'pro' && (
-                <ProCards
-                  monthlyIncomeTax={result.monthlyIncomeTax}
-                  empCount={empCount}
-                  finalProfit={result.finalProfit}
-                  onConsult={(proType, proLabel) => setConsultModal({ proType, proLabel })}
-                />
-              )}
-            </div>
-          </>
-        )}
-
-        {/* History Link */}
-        {result && (
-          <div className="mt-4 text-center">
-            <a
-              href="/history"
-              className="inline-flex items-center gap-1 text-sm text-blue-600 font-medium hover:underline"
-            >
-              {"\uD83D\uDCCA"} 월별 내역 보기 {"\u2192"}
-            </a>
+        {/* Service Features */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
+          <h2 className="font-bold text-gray-800 mb-4">이런 걸 도와드려요</h2>
+          <div className="space-y-3">
+            {[
+              { icon: '\uD83E\uDDEE', title: '실수령액 자동 계산', desc: '매출 입력하면 세금, 보험, 원가 빼고 진짜 남는 돈을 알려드려요' },
+              { icon: '\uD83D\uDCCA', title: '업종 평균 비교', desc: '같은 업종 사장님들과 비교해서 어디서 돈이 새는지 찾아드려요' },
+              { icon: '\uD83E\uDD16', title: 'AI 경영 조언', desc: '내 숫자를 분석해서 지금 당장 할 수 있는 절세/절감 방법을 알려드려요' },
+              { icon: '\uD83D\uDC64', title: '전문가 바로 연결', desc: '세무사, 노무사, 변호사에게 내 경영 데이터와 함께 상담 신청' },
+              { icon: '\u23F0', title: '시간당 수익 계산', desc: '사장님의 시간은 소중합니다. 시급이 최저시급보다 높은지 확인하세요' },
+            ].map((f) => (
+              <div key={f.title} className="flex items-start gap-3">
+                <span className="text-xl mt-0.5">{f.icon}</span>
+                <div>
+                  <p className="font-semibold text-gray-800 text-sm">{f.title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{f.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+
+        {/* CTA */}
+        <Link
+          href="/calc"
+          className="block w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg text-center hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg shadow-blue-200 mb-4"
+        >
+          지금 바로 계산해보기 {"\u2192"}
+        </Link>
+
+        {/* Trust Signals */}
+        <div className="grid grid-cols-3 gap-2 mb-6">
+          <div className="bg-gray-50 rounded-xl p-3 text-center">
+            <p className="text-lg font-bold text-blue-600">5개</p>
+            <p className="text-xs text-gray-500">업종 지원</p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-3 text-center">
+            <p className="text-lg font-bold text-emerald-600">무료</p>
+            <p className="text-xs text-gray-500">완전 무료</p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-3 text-center">
+            <p className="text-lg font-bold text-amber-600">AI</p>
+            <p className="text-xs text-gray-500">맞춤 조언</p>
+          </div>
+        </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-gray-400 mt-8 pb-4">
-          본 계산기는 참고용이며, 정확한 세무 상담은 전문가에게 문의하세요.
-        </p>
+        <div className="text-center pb-8">
+          <p className="text-xs text-gray-400">
+            사장님의 든든한 경영 파트너
+          </p>
+          <p className="text-sm font-semibold text-gray-600 mt-1">
+            profit.genomic.cc
+          </p>
+        </div>
       </div>
-
-      {/* Consult Modal */}
-      {consultModal && (
-        <ConsultModal
-          proType={consultModal.proType}
-          proLabel={consultModal.proLabel}
-          recordSnapshot={result ? { ...result, revenue, bizType, taxType } : undefined}
-          onClose={() => setConsultModal(null)}
-        />
-      )}
     </div>
   );
 }
