@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Advice {
   type: 'danger' | 'warning' | 'good' | 'info';
@@ -20,16 +20,16 @@ interface Props {
 }
 
 const TYPE_STYLES = {
-  danger:  { bg: 'bg-red-50', border: 'border-red-300', icon: '\uD83D\uDEA8', label: '위험', labelBg: 'bg-red-500' },
-  warning: { bg: 'bg-amber-50', border: 'border-amber-300', icon: '\u26A0\uFE0F', label: '주의', labelBg: 'bg-amber-500' },
-  good:    { bg: 'bg-emerald-50', border: 'border-emerald-300', icon: '\u2705', label: '양호', labelBg: 'bg-emerald-500' },
-  info:    { bg: 'bg-blue-50', border: 'border-blue-300', icon: '\uD83D\uDCA1', label: '참고', labelBg: 'bg-blue-500' },
+  danger:  { border: 'border-l-red-500 bg-red-50',     icon: '\uD83D\uDEA8', label: '위험', labelBg: 'bg-red-500' },
+  warning: { border: 'border-l-amber-500 bg-amber-50',   icon: '\u26A0\uFE0F', label: '주의', labelBg: 'bg-amber-500' },
+  good:    { border: 'border-l-emerald-500 bg-emerald-50', icon: '\u2705', label: '양호', labelBg: 'bg-emerald-500' },
+  info:    { border: 'border-l-blue-500 bg-blue-50',     icon: '\uD83D\uDCA1', label: '참고', labelBg: 'bg-blue-500' },
 };
 
 const PRO_LABELS: Record<string, string> = {
-  tax: '세무사 상담',
-  labor: '노무사 상담',
-  legal: '변호사 상담',
+  tax: '세무사 연결',
+  labor: '노무사 연결',
+  legal: '변호사 연결',
 };
 
 export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCount, autoFetch, onProLink }: Props) {
@@ -61,33 +61,37 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
     }
   };
 
-  useEffect(() => {
-    if (autoFetch && !fetched && !loading) {
-      fetchAdvice();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoFetch]);
+  // autoFetch 처리: 컴포넌트 마운트 시 한 번만
+  if (autoFetch && !fetched && !loading && !error) {
+    fetchAdvice();
+  }
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
-        <div className="flex justify-center gap-1 mb-3">
-          <span className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
-          <span className="w-3 h-3 bg-blue-500 rounded-full animate-pulse [animation-delay:0.2s]" />
-          <span className="w-3 h-3 bg-blue-500 rounded-full animate-pulse [animation-delay:0.4s]" />
+      <div className="rounded-2xl p-8 shadow-sm border border-[#e0d5c5] text-center" style={{ background: '#FFFDF7' }}>
+        <div className="flex justify-center gap-2 mb-4">
+          <span className="w-3.5 h-3.5 bg-[#2D5A8E] rounded-full animate-pulse" />
+          <span className="w-3.5 h-3.5 bg-[#2D5A8E] rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+          <span className="w-3.5 h-3.5 bg-[#2D5A8E] rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
         </div>
-        <p className="text-sm text-gray-500">AI가 경영 데이터를 분석하고 있습니다...</p>
+        <p className="text-[#5a4a3a]" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+          사장님 데이터 분석 중...
+        </p>
+        <p className="text-[#a09080]" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+          잠시만 기다려주세요
+        </p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <p className="text-sm text-red-500 text-center mb-3">{error}</p>
+      <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
+        <p className="text-red-500 text-center mb-4" style={{ fontSize: '16px', lineHeight: '1.8' }}>{error}</p>
         <button
           onClick={fetchAdvice}
-          className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+          className="w-full py-3.5 rounded-xl bg-[#2D5A8E] text-white font-bold hover:bg-[#24496f] transition-colors"
+          style={{ fontSize: '16px', minHeight: '48px' }}
         >
           다시 시도
         </button>
@@ -96,64 +100,54 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
   }
 
   if (!fetched) {
-    return (
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center">
-        <p className="text-3xl mb-3">{"\uD83E\uDD16"}</p>
-        <p className="text-sm text-gray-600 mb-4">
-          AI가 경영 데이터를 분석하여<br />맞춤 조언을 제공합니다
-        </p>
-        <button
-          onClick={fetchAdvice}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
-        >
-          AI 경영 조언 받기
-        </button>
-      </div>
-    );
+    return null;
   }
 
   return (
     <div className="space-y-3">
+      <h3 className="font-bold text-[#3a3025] px-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+        {"\uD83E\uDD16"} AI 경영 조언
+      </h3>
+
       {advices.map((a, i) => {
         const style = TYPE_STYLES[a.type] || TYPE_STYLES.info;
         return (
-          <div key={i} className={`rounded-xl p-4 border-2 ${style.bg} ${style.border}`}>
-            <div className="flex items-start gap-3">
+          <div
+            key={i}
+            className={`rounded-xl border-l-4 ${style.border}`}
+            style={{ padding: '16px 20px', lineHeight: '1.8' }}
+          >
+            <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">{style.icon}</span>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-xs text-white px-2 py-0.5 rounded-full ${style.labelBg}`}>
-                    {style.label}
-                  </span>
-                  <span className="font-bold text-gray-800 text-sm">{a.title}</span>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">{a.body}</p>
-                {a.proLink && a.proLink !== 'none' && onProLink && (
-                  <button
-                    onClick={() => onProLink('pro')}
-                    className="mt-2 text-xs text-blue-600 font-semibold hover:underline"
-                  >
-                    {PRO_LABELS[a.proLink]} {"\u2192"}
-                  </button>
-                )}
-              </div>
+              <span className={`text-xs text-white px-2.5 py-0.5 rounded-full font-bold ${style.labelBg}`}>
+                {style.label}
+              </span>
+              <span className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>
+                {a.title}
+              </span>
             </div>
+            <p className="text-[#5a4a3a]" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+              {a.body}
+            </p>
+            {a.proLink && a.proLink !== 'none' && onProLink && (
+              <button
+                onClick={() => onProLink(a.proLink)}
+                className="mt-3 py-2.5 px-4 rounded-lg bg-[#2D5A8E] text-white font-bold text-sm hover:bg-[#24496f] transition-colors"
+                style={{ minHeight: '44px' }}
+              >
+                {PRO_LABELS[a.proLink]} {"\u2192"}
+              </button>
+            )}
           </div>
         );
       })}
 
       <button
         onClick={fetchAdvice}
-        className="w-full py-2.5 rounded-xl border-2 border-dashed border-gray-300 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
+        className="w-full py-3 rounded-xl border-2 border-dashed border-[#c0b5a5] text-[#a09080] font-semibold hover:border-[#2D5A8E] hover:text-[#2D5A8E] transition-colors"
+        style={{ fontSize: '16px', minHeight: '48px', lineHeight: '1.8' }}
       >
         조언 다시 받기
-      </button>
-
-      <button
-        onClick={() => onProLink?.('pro')}
-        className="w-full py-3 rounded-xl bg-gray-100 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-colors"
-      >
-        전문가에게 이 데이터 공유하기
       </button>
     </div>
   );
