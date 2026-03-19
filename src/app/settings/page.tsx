@@ -72,7 +72,7 @@ export default function SettingsPage() {
     }
   }, [name, phone, bizType, taxType, empCount, workDays, workHours, existingUserId]);
 
-  const inputClass = "w-full rounded-lg border border-[#e0d5c5] px-4 outline-none";
+  const inputClass = "w-full rounded-lg border border-border px-4 outline-none";
 
   if (saved) {
     return (
@@ -106,7 +106,7 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl p-5 border border-[#e0d5c5] space-y-4" style={{ background: 'var(--bg-card)' }}>
+        <div className="rounded-2xl p-5 border border-border space-y-4" style={{ background: 'var(--bg-card)' }}>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>이름</label>

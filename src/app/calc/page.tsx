@@ -139,7 +139,7 @@ export default function CalcPage() {
             value={value}
             onChange={(e) => onChange(Number(e.target.value))}
             step={100000}
-            className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-right text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="w-full rounded-lg border border-border px-4 py-3 text-right text-base outline-none"
             style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>원</span>
@@ -170,7 +170,7 @@ export default function CalcPage() {
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           step={step}
-          className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-right text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+          className="w-full rounded-lg border border-border px-4 py-3 text-right text-base outline-none"
           style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
         />
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>{suffix}</span>
@@ -199,14 +199,14 @@ export default function CalcPage() {
         </div>
 
         {/* Input Form */}
-        <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5] space-y-5" style={{ background: 'var(--bg-card)' }}>
+        <div className="rounded-2xl p-6 shadow-sm border border-border space-y-5" style={{ background: 'var(--bg-card)' }}>
           {/* 업종 */}
           <div>
             <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>업종</label>
             <select
               value={bizType}
               onChange={(e) => handleBizChange(e.target.value as BizType)}
-              className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full rounded-lg border border-border px-4 py-3 text-base outline-none"
               style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
             >
               {BIZ_OPTIONS.map((o) => (
@@ -245,7 +245,7 @@ export default function CalcPage() {
                 value={revenue}
                 onChange={(e) => handleRevenueChange(Number(e.target.value))}
                 step={100000}
-                className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-right text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                className="w-full rounded-lg border border-border px-4 py-3 text-right text-base outline-none"
                 style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>원</span>
@@ -254,7 +254,7 @@ export default function CalcPage() {
           </div>
 
           {/* 원가 4항목 */}
-          <div className="pt-3 border-t border-[#e0d5c5]">
+          <div className="pt-3 border-t border-border">
             <p className="text-base font-bold mb-3" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>월 지출 (원가)</p>
             <div className="grid grid-cols-2 gap-3">
               {costInput('임대료', costRent, setCostRent, bm.rent)}
@@ -265,7 +265,7 @@ export default function CalcPage() {
           </div>
 
           {/* 직원/근무 */}
-          <div className="pt-3 border-t border-[#e0d5c5]">
+          <div className="pt-3 border-t border-border">
             <div className="grid grid-cols-3 gap-3">
               {numInput('직원 수', empCount, setEmpCount, '명', 1)}
               {numInput('월 근무일', workDays, setWorkDays, '일', 1)}

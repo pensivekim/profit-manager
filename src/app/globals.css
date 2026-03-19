@@ -35,6 +35,7 @@
 @theme inline {
   --color-background: var(--bg-page);
   --color-foreground: var(--text-primary);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

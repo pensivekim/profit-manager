@@ -52,7 +52,7 @@ export default function ConsultModal({ proType, proLabel, recordSnapshot, onClos
     }
   };
 
-  const inputClass = "w-full rounded-lg border border-[#e0d5c5] px-4 py-3 outline-none";
+  const inputClass = "w-full rounded-lg border border-border px-4 py-3 outline-none";
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center" onClick={onClose}>
@@ -132,7 +132,7 @@ export default function ConsultModal({ proType, proLabel, recordSnapshot, onClos
                   type="checkbox"
                   checked={shareData}
                   onChange={(e) => setShareData(e.target.checked)}
-                  className="w-5 h-5 rounded border-[#c0b5a5]"
+                  className="w-5 h-5 rounded border-border"
                   style={{ accentColor: 'var(--accent)' }}
                 />
                 <div>

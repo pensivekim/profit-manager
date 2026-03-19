@@ -54,7 +54,7 @@ export default function InstallBanner() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4">
-      <div className="max-w-lg mx-auto rounded-2xl p-4 shadow-lg border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+      <div className="max-w-lg mx-auto rounded-2xl p-4 shadow-lg border border-border" style={{ background: 'var(--bg-card)' }}>
         <div className="flex items-start gap-3">
           <span className="text-2xl mt-0.5">{"\uD83D\uDCF1"}</span>
           <div className="flex-1">

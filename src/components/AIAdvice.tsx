@@ -68,7 +68,7 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
 
   if (loading) {
     return (
-      <div className="rounded-2xl p-8 shadow-sm border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)' }}>
+      <div className="rounded-2xl p-8 shadow-sm border border-border text-center" style={{ background: 'var(--bg-card)' }}>
         <div className="flex justify-center gap-2 mb-4">
           <span className="w-3.5 h-3.5 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
           <span className="w-3.5 h-3.5 rounded-full animate-pulse" style={{ background: 'var(--accent)', animationDelay: '0.2s' }} />
@@ -86,7 +86,7 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
 
   if (error) {
     return (
-      <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+      <div className="rounded-2xl p-6 shadow-sm border border-border" style={{ background: 'var(--bg-card)' }}>
         <p className="text-red-500 text-center mb-4" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)' }}>{error}</p>
         <button
           onClick={fetchAdvice}
@@ -144,7 +144,7 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
 
       <button
         onClick={fetchAdvice}
-        className="w-full py-3 rounded-xl border-2 border-dashed border-[#c0b5a5] font-semibold transition-colors"
+        className="w-full py-3 rounded-xl border-2 border-dashed border-border font-semibold transition-colors"
         style={{ fontSize: 'var(--font-size-base)', minHeight: '48px', lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}
       >
         조언 다시 받기

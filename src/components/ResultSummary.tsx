@@ -22,8 +22,8 @@ export default function ResultSummary({ finalProfit, hourlyWage, totalHours, rev
     <div className="space-y-3">
       {/* 실수령액 강조 */}
       <div
-        className={`rounded-2xl p-6 text-white ${isLoss ? 'bg-red-500' : 'bg-[#2D5A8E]'}`}
-        style={{ lineHeight: 'var(--line-height)' }}
+        className="rounded-2xl p-6 text-white"
+        style={{ lineHeight: 'var(--line-height)', background: isLoss ? 'var(--danger)' : 'var(--accent)' }}
       >
         <p className="text-base opacity-80 mb-1">
           {isLoss ? '이번 달 적자입니다' : '이번 달 내 손에 남는 돈'}
@@ -58,15 +58,15 @@ export default function ResultSummary({ finalProfit, hourlyWage, totalHours, rev
 
       {/* 요약 카드 3개 */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+        <div className="rounded-xl p-3 border border-border text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
           <p className="text-sm" style={{ color: 'var(--text-hint)' }}>매출</p>
           <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--accent)' }}>{fmtComma(revenue)}원</p>
         </div>
-        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+        <div className="rounded-xl p-3 border border-border text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
           <p className="text-sm" style={{ color: 'var(--text-hint)' }}>운영비</p>
           <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--text-secondary)' }}>{fmtComma(opCost)}원</p>
         </div>
-        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+        <div className="rounded-xl p-3 border border-border text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
           <p className="text-sm" style={{ color: 'var(--text-hint)' }}>세금합계</p>
           <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: '#dc2626' }}>{fmtComma(totalTax)}원</p>
         </div>

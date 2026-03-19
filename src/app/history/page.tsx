@@ -72,7 +72,7 @@ export default function HistoryPage() {
     return (
       <div className="min-h-screen" style={{ background: 'var(--bg-page)' }}>
         <div className="max-w-lg mx-auto px-4 py-8">
-          <div className="rounded-2xl p-8 text-center border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+          <div className="rounded-2xl p-8 text-center border border-border" style={{ background: 'var(--bg-card)' }}>
             <p className="text-4xl mb-3">{"\uD83D\uDCCA"}</p>
             <p className="font-bold mb-2" style={{ fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>아직 기록이 없습니다</p>
             <p className="mb-4" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}>매주 매출을 입력하면 추이를 볼 수 있어요</p>
@@ -199,7 +199,7 @@ export default function HistoryPage() {
         {tab === 'weekly' && (
           <>
             {/* 차트 */}
-            <div className="rounded-2xl p-4 border border-[#e0d5c5] mb-4" style={{ background: 'var(--bg-card)', height: '280px' }}>
+            <div className="rounded-2xl p-4 border border-border mb-4" style={{ background: 'var(--bg-card)', height: '280px' }}>
               <h3 className="font-bold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>주별 실수령액</h3>
               <div style={{ height: '220px' }}>
                 <Line data={weeklyChartData} options={chartOpts} />
@@ -208,22 +208,22 @@ export default function HistoryPage() {
 
             {/* 요약 카드 */}
             <div className="grid grid-cols-2 gap-2 mb-4">
-              <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+              <div className="rounded-xl p-4 border border-border" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
                 <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>최근 4주 평균</p>
                 <p className="font-bold" style={{ fontSize: 'var(--font-size-lg)', color: 'var(--accent)' }}>{fmtComma(avg4)}원</p>
               </div>
-              <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+              <div className="rounded-xl p-4 border border-border" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
                 <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>이번 달 누적</p>
                 <p className="font-bold" style={{ fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>{fmtComma(thisMonthTotal)}원</p>
               </div>
               {best && (
-                <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+                <div className="rounded-xl p-4 border border-border" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
                   <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>최고 주</p>
                   <p className="font-bold text-emerald-600" style={{ fontSize: 'var(--font-size-base)' }}>{weekLabel(best.week_start)} {fmtComma(best.final_profit)}원</p>
                 </div>
               )}
               {worst && (
-                <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+                <div className="rounded-xl p-4 border border-border" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
                   <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>최저 주</p>
                   <p className="font-bold text-red-500" style={{ fontSize: 'var(--font-size-base)' }}>{weekLabel(worst.week_start)} {fmtComma(worst.final_profit)}원</p>
                 </div>
@@ -260,7 +260,7 @@ export default function HistoryPage() {
                 const diff = prev ? r.final_profit - prev.final_profit : 0;
                 return (
                   <button key={r.week_start} onClick={() => setSelectedWeek(r)}
-                    className="w-full rounded-xl p-4 border border-[#e0d5c5] text-left"
+                    className="w-full rounded-xl p-4 border border-border text-left"
                     style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
                     <div className="flex justify-between items-center">
                       <span className="font-semibold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>{weekLabel(r.week_start)}</span>
@@ -285,7 +285,7 @@ export default function HistoryPage() {
         {/* 월별 탭 */}
         {tab === 'monthly' && (
           <>
-            <div className="rounded-2xl p-4 border border-[#e0d5c5] mb-4" style={{ background: 'var(--bg-card)', height: '280px' }}>
+            <div className="rounded-2xl p-4 border border-border mb-4" style={{ background: 'var(--bg-card)', height: '280px' }}>
               <h3 className="font-bold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>월별 실수령액</h3>
               <div style={{ height: '220px' }}>
                 <Bar data={monthlyChartData} options={chartOpts} />
@@ -297,7 +297,7 @@ export default function HistoryPage() {
                 const prev = monthlyRecords[i + 1];
                 const diff = prev ? (r.final_profit as number) - (prev.final_profit as number) : 0;
                 return (
-                  <div key={r.year_month} className="rounded-xl p-4 border border-[#e0d5c5]"
+                  <div key={r.year_month} className="rounded-xl p-4 border border-border"
                     style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
                     <div className="flex justify-between items-center">
                       <div>

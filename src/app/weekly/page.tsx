@@ -157,7 +157,7 @@ export default function WeeklyPage() {
 
         {/* 매출 입력 - 딱 1개 */}
         <div className="flex-1 flex flex-col justify-center">
-          <div className="rounded-2xl p-6 border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+          <div className="rounded-2xl p-6 border border-border" style={{ background: 'var(--bg-card)' }}>
             <label className="block font-bold mb-3 text-center" style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
               이번 주 총 매출이 얼마인가요?
             </label>

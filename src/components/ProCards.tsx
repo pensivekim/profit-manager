@@ -68,7 +68,7 @@ export default function ProCards({ monthlyIncomeTax, vatProvision, empCount, ins
   ];
 
   return (
-    <div className="rounded-2xl p-5 shadow-sm border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+    <div className="rounded-2xl p-5 shadow-sm border border-border" style={{ background: 'var(--bg-card)' }}>
       <h3 className="font-bold mb-4" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
         {"\uD83D\uDC64"} 전문가 상담 연결
       </h3>
@@ -77,7 +77,7 @@ export default function ProCards({ monthlyIncomeTax, vatProvision, empCount, ins
           <div
             key={c.type}
             className={`rounded-xl p-4 border-2 transition-all ${
-              c.urgent ? 'border-red-300 bg-red-50' : 'border-[#e0d5c5]'
+              c.urgent ? 'border-red-300 bg-red-50' : 'border-border'
             }`}
             style={{ background: c.urgent ? undefined : 'var(--bg-card)' }}
           >

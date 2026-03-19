@@ -38,7 +38,7 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
   ];
 
   return (
-    <div className="rounded-2xl shadow-sm border border-[#e0d5c5] overflow-hidden" style={{ background: 'var(--bg-card)' }}>
+    <div className="rounded-2xl shadow-sm border border-border overflow-hidden" style={{ background: 'var(--bg-card)' }}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full px-5 py-4 flex items-center justify-between"
@@ -57,7 +57,7 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
 
       {open && (
         <div className="px-5 pb-5">
-          <div className="divide-y divide-[#e0d5c5]">
+          <div className="divide-y divide-border">
             {rows.map((r) => (
               <div key={r.label} className="flex justify-between items-start py-3" style={{ lineHeight: 'var(--line-height)' }}>
                 <div className="flex-1 mr-3">
@@ -70,7 +70,7 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
               </div>
             ))}
           </div>
-          <div className="mt-2 pt-3 border-t-2 border-[#c0b5a5] flex justify-between" style={{ lineHeight: 'var(--line-height)' }}>
+          <div className="mt-2 pt-3 border-t-2 border-border flex justify-between" style={{ lineHeight: 'var(--line-height)' }}>
             <span className="font-bold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>월 세금 합계</span>
             <span className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-lg)' }}>{fmtComma(totalTax)}원</span>
           </div>

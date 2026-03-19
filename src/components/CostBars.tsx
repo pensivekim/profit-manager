@@ -16,7 +16,7 @@ interface Props {
 }
 
 const LABELS = [
-  { key: 'rent', label: '임대료', color: 'bg-[#2D5A8E]' },
+  { key: 'rent', label: '임대료', color: 'bg-blue-800' },
   { key: 'labor', label: '인건비', color: 'bg-amber-500' },
   { key: 'material', label: '재료/매입', color: 'bg-emerald-600' },
   { key: 'other', label: '기타경비', color: 'bg-purple-500' },
@@ -29,7 +29,7 @@ export default function CostBars(props: Props) {
   const bmVals = { rent: bm.rent, labor: bm.labor, material: bm.material, other: bm.other };
 
   return (
-    <div className="rounded-2xl p-5 shadow-sm border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+    <div className="rounded-2xl p-5 shadow-sm border border-border" style={{ background: 'var(--bg-card)' }}>
       <h3 className="font-bold mb-4" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
         {"\uD83D\uDCCA"} 원가 구조 분석
       </h3>
