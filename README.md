@@ -62,3 +62,21 @@ D1 database `profit-manager-db` with tables:
 - `consult_requests` - Expert consultation requests
 
 Schema: `db/schema.sql`
+
+## 알림톡 활성화 방법 (사용자 500명 이상 권장)
+
+현재 알림톡/SMS 발송과 Cron은 비활성화 상태입니다. 활성화하려면:
+
+1. `src/lib/alimtalk.ts` 에서 `ALIMTALK_ENABLED = true` 로 변경
+2. `worker/wrangler.toml` 에서 `[triggers]` crons 주석 해제
+3. NHN Cloud 콘솔에서 알림톡 템플릿 2개 등록 (심사 1~2일 소요)
+   - `WEEKLY_REMIND` : 월요일 리마인더
+   - `WEEKLY_REPORT` : 금요일 성적표
+4. 시크릿 등록 확인:
+   ```bash
+   npx wrangler pages secret put NHN_APPKEY --project-name profit-manager
+   npx wrangler pages secret put NHN_SECRET_KEY --project-name profit-manager
+   npx wrangler pages secret put NHN_SENDER_KEY --project-name profit-manager
+   npx wrangler pages secret put ADMIN_PHONE --project-name profit-manager
+   ```
+5. Cron Worker 재배포: `cd worker && npx wrangler deploy`
