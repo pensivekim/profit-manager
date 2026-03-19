@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma } from '@/lib/format';
@@ -42,14 +42,28 @@ interface CalcResult {
   [key: string]: number;
 }
 
+function calcDefaults(biz: BizType, rev: number) {
+  const bm = BENCHMARKS[biz];
+  return {
+    costRent: Math.round(rev * bm.rent / 100),
+    costLabor: Math.round(rev * bm.labor / 100),
+    costMaterial: Math.round(rev * bm.material / 100),
+    costOther: Math.round(rev * bm.other / 100),
+  };
+}
+
+const initBiz: BizType = 'restaurant';
+const initRev = 20000000;
+const initDefaults = calcDefaults(initBiz, initRev);
+
 export default function CalcPage() {
-  const [bizType, setBizType] = useState<BizType>('restaurant');
+  const [bizType, setBizType] = useState<BizType>(initBiz);
   const [taxType, setTaxType] = useState<'general' | 'simplified'>('general');
-  const [revenue, setRevenue] = useState(20000000);
-  const [costRent, setCostRent] = useState(0);
-  const [costLabor, setCostLabor] = useState(0);
-  const [costMaterial, setCostMaterial] = useState(0);
-  const [costOther, setCostOther] = useState(0);
+  const [revenue, setRevenue] = useState(initRev);
+  const [costRent, setCostRent] = useState(initDefaults.costRent);
+  const [costLabor, setCostLabor] = useState(initDefaults.costLabor);
+  const [costMaterial, setCostMaterial] = useState(initDefaults.costMaterial);
+  const [costOther, setCostOther] = useState(initDefaults.costOther);
   const [empCount, setEmpCount] = useState(1);
   const [workDays, setWorkDays] = useState(25);
   const [workHours, setWorkHours] = useState(10);
@@ -58,13 +72,25 @@ export default function CalcPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [consultModal, setConsultModal] = useState<{ proType: string; proLabel: string } | null>(null);
 
-  useEffect(() => {
-    const bm = BENCHMARKS[bizType];
-    setCostRent(Math.round(revenue * bm.rent / 100));
-    setCostLabor(Math.round(revenue * bm.labor / 100));
-    setCostMaterial(Math.round(revenue * bm.material / 100));
-    setCostOther(Math.round(revenue * bm.other / 100));
-  }, [bizType, revenue]);
+  const bm = BENCHMARKS[bizType];
+
+  const applyDefaults = useCallback((biz: BizType, rev: number) => {
+    const d = calcDefaults(biz, rev);
+    setCostRent(d.costRent);
+    setCostLabor(d.costLabor);
+    setCostMaterial(d.costMaterial);
+    setCostOther(d.costOther);
+  }, []);
+
+  const handleBizChange = (newBiz: BizType) => {
+    setBizType(newBiz);
+    applyDefaults(newBiz, revenue);
+  };
+
+  const handleRevenueChange = (newRev: number) => {
+    setRevenue(newRev);
+    applyDefaults(bizType, newRev);
+  };
 
   const handleCalc = async () => {
     setLoading(true);
@@ -92,28 +118,64 @@ export default function CalcPage() {
     }
   };
 
+  const costInput = (
+    label: string,
+    value: number,
+    onChange: (v: number) => void,
+    avgPct: number,
+  ) => {
+    const actualPct = revenue > 0 ? Math.round(value / revenue * 100) : 0;
+    const over = actualPct > avgPct && avgPct > 0;
+    return (
+      <div>
+        <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>
+          {label}
+          <span className={`ml-1 text-sm font-normal ${over ? 'text-red-600' : 'text-[#a09080]'}`}>
+            (평균 {avgPct}%)
+          </span>
+        </label>
+        <div className="relative">
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => onChange(Number(e.target.value))}
+            step={100000}
+            className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-right text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            style={{ fontSize: '16px', lineHeight: '1.8' }}
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a09080] text-sm pointer-events-none">원</span>
+        </div>
+        <div className="flex justify-between mt-1">
+          <span className={`text-sm ${over ? 'text-red-600 font-semibold' : 'text-[#a09080]'}`}>
+            {actualPct}%
+            {over && ' (초과!)'}
+          </span>
+          <span className="text-sm text-[#a09080]">{fmtComma(value)}원</span>
+        </div>
+      </div>
+    );
+  };
+
   const numInput = (
     label: string,
     value: number,
     onChange: (v: number) => void,
-    suffix = '원',
-    step = 100000,
+    suffix: string,
+    step: number,
   ) => (
     <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+      <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>{label}</label>
       <div className="relative">
         <input
           type="number"
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           step={step}
-          className="w-full rounded-lg border border-gray-200 px-4 py-3 text-right text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+          className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-right text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+          style={{ fontSize: '16px', lineHeight: '1.8' }}
         />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">
-          {suffix}
-        </span>
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a09080] text-sm pointer-events-none">{suffix}</span>
       </div>
-      <p className="text-xs text-gray-400 mt-1 text-right">{fmtComma(value)}원</p>
     </div>
   );
 
@@ -126,25 +188,27 @@ export default function CalcPage() {
   } : null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
+      <div className="max-w-lg mx-auto px-4 py-6 pb-24 sm:pb-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Link href="/" className="text-sm text-blue-600 font-medium">{"\u2190"} 홈</Link>
+        <div className="flex items-center justify-between mb-5">
+          <Link href="/" className="text-base text-blue-600 font-semibold" style={{ lineHeight: '1.8' }}>{"\u2190"} 홈</Link>
           <div className="text-center flex-1">
-            <h1 className="text-xl font-bold text-gray-900">내 손에 얼마 남았나?</h1>
+            <h1 className="text-xl font-bold text-[#3a3025]" style={{ lineHeight: '1.8' }}>내 손에 얼마 남았나?</h1>
           </div>
           <div className="w-10" />
         </div>
 
         {/* Input Form */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5">
+        <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5] space-y-5" style={{ background: '#FFFDF7' }}>
+          {/* 업종 */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">업종</label>
+            <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>업종</label>
             <select
               value={bizType}
-              onChange={(e) => setBizType(e.target.value as BizType)}
-              className="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white"
+              onChange={(e) => handleBizChange(e.target.value as BizType)}
+              className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              style={{ fontSize: '16px', lineHeight: '1.8' }}
             >
               {BIZ_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -152,18 +216,20 @@ export default function CalcPage() {
             </select>
           </div>
 
+          {/* 과세유형 */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">과세유형</label>
+            <label className="block text-base font-semibold text-[#5a4a3a] mb-2" style={{ lineHeight: '1.8' }}>과세유형</label>
             <div className="grid grid-cols-2 gap-2">
               {(['general', 'simplified'] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTaxType(t)}
-                  className={`py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`py-3 rounded-lg text-base font-semibold transition-all ${
                     taxType === t
                       ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-[#F5F0E8] text-[#5a4a3a] hover:bg-[#ebe5da]'
                   }`}
+                  style={{ lineHeight: '1.8' }}
                 >
                   {t === 'general' ? '일반과세자' : '간이과세자'}
                 </button>
@@ -171,19 +237,36 @@ export default function CalcPage() {
             </div>
           </div>
 
-          {numInput('월 매출', revenue, setRevenue)}
+          {/* 매출 */}
+          <div>
+            <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>월 매출</label>
+            <div className="relative">
+              <input
+                type="number"
+                value={revenue}
+                onChange={(e) => handleRevenueChange(Number(e.target.value))}
+                step={100000}
+                className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-right text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                style={{ fontSize: '16px', lineHeight: '1.8' }}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a09080] text-sm pointer-events-none">원</span>
+            </div>
+            <p className="text-sm text-[#a09080] mt-1 text-right">{fmtComma(revenue)}원</p>
+          </div>
 
-          <div className="pt-2 border-t border-gray-100">
-            <p className="text-sm font-semibold text-gray-700 mb-3">월 지출 (원가)</p>
+          {/* 원가 4항목 */}
+          <div className="pt-3 border-t border-[#e0d5c5]">
+            <p className="text-base font-bold text-[#3a3025] mb-3" style={{ lineHeight: '1.8' }}>월 지출 (원가)</p>
             <div className="grid grid-cols-2 gap-3">
-              {numInput('임대료', costRent, setCostRent)}
-              {numInput('인건비', costLabor, setCostLabor)}
-              {numInput('재료/매입', costMaterial, setCostMaterial)}
-              {numInput('기타경비', costOther, setCostOther)}
+              {costInput('임대료', costRent, setCostRent, bm.rent)}
+              {costInput('인건비', costLabor, setCostLabor, bm.labor)}
+              {costInput('재료/매입', costMaterial, setCostMaterial, bm.material)}
+              {costInput('기타경비', costOther, setCostOther, bm.other)}
             </div>
           </div>
 
-          <div className="pt-2 border-t border-gray-100">
+          {/* 직원/근무 */}
+          <div className="pt-3 border-t border-[#e0d5c5]">
             <div className="grid grid-cols-3 gap-3">
               {numInput('직원 수', empCount, setEmpCount, '명', 1)}
               {numInput('월 근무일', workDays, setWorkDays, '일', 1)}
@@ -191,16 +274,18 @@ export default function CalcPage() {
             </div>
           </div>
 
+          {/* 계산 버튼 */}
           <button
             onClick={handleCalc}
             disabled={loading}
             className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ fontSize: '18px', lineHeight: '1.8' }}
           >
             {loading ? '계산 중...' : '계산하기'}
           </button>
         </div>
 
-        {/* Results with Tabs */}
+        {/* Results */}
         {result && (
           <>
             <div className="mt-6">
@@ -268,17 +353,14 @@ export default function CalcPage() {
         {/* History Link */}
         {result && (
           <div className="mt-4 text-center">
-            <a
-              href="/history"
-              className="inline-flex items-center gap-1 text-sm text-blue-600 font-medium hover:underline"
-            >
+            <Link href="/history" className="inline-flex items-center gap-1 text-base text-blue-600 font-semibold hover:underline">
               {"\uD83D\uDCCA"} 월별 내역 보기 {"\u2192"}
-            </a>
+            </Link>
           </div>
         )}
 
         {/* Footer */}
-        <p className="text-center text-xs text-gray-400 mt-8 pb-4">
+        <p className="text-center text-sm text-[#a09080] mt-8 pb-4" style={{ lineHeight: '1.8' }}>
           본 계산기는 참고용이며, 정확한 세무 상담은 전문가에게 문의하세요.
         </p>
       </div>

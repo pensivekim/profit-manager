@@ -14,7 +14,7 @@ const TABS = [
 
 export default function TabNav({ activeTab, onTabChange }: Props) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 sm:static sm:border-t-0 sm:bg-transparent sm:mb-4">
+    <div className="fixed bottom-0 left-0 right-0 border-t border-[#e0d5c5] z-50 sm:static sm:border-t-0 sm:bg-transparent sm:mb-4" style={{ background: '#FFFDF7' }}>
       <div className="max-w-lg mx-auto flex">
         {TABS.map((tab) => (
           <button

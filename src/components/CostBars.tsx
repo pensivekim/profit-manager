@@ -29,7 +29,7 @@ export default function CostBars(props: Props) {
   const bmVals = { rent: bm.rent, labor: bm.labor, material: bm.material, other: bm.other };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
       <h3 className="font-bold text-gray-800 mb-4">원가 구조 분석</h3>
       <div className="space-y-4">
         {LABELS.map(({ key, label, color }) => {

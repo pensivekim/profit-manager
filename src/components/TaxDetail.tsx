@@ -30,7 +30,7 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
       <h3 className="font-bold text-gray-800 mb-4">세금/보험 내역</h3>
       <div className="divide-y divide-gray-100">
         {rows.map((r) => (
