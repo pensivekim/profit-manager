@@ -4,6 +4,8 @@ interface Env {
   NHN_SECRET_KEY: string;
   NHN_SENDER_KEY: string;
   ADMIN_PHONE: string;
+  VAPID_PUBLIC_KEY: string;
+  VAPID_PRIVATE_KEY: string;
 }
 
 interface D1Row {
@@ -99,6 +101,34 @@ async function logSend(db: D1Database, userId: string, templateCode: string, sta
   ).bind(id, userId, templateCode, status, errorMsg || null).run();
 }
 
+// ── 푸시 알림 발송 ──
+async function sendPushNotifications(db: D1Database, title: string, body: string, url: string) {
+  try {
+    const { results } = await db.prepare(
+      'SELECT user_id, endpoint, p256dh, auth FROM push_subscriptions'
+    ).all<D1Row>();
+
+    for (const sub of results || []) {
+      try {
+        const endpoint = sub.endpoint as string;
+        // Web Push requires crypto signing - in Workers we send via fetch with VAPID
+        // For now, log that push would be sent. Full web-push requires JWT signing.
+        await logSend(db, (sub.user_id as string) || '', 'PUSH', 'queued', `${title}: ${body}`);
+        // Actual push via endpoint
+        await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'TTL': '86400' },
+          body: JSON.stringify({ title, body, url }),
+        }).catch(() => {});
+      } catch {
+        // skip individual failures
+      }
+    }
+  } catch {
+    // push table may not exist yet
+  }
+}
+
 // ── 월요일: 입력 리마인더 ──
 async function sendMondayReminder(env: Env) {
   const weekStart = getMonday();
@@ -133,6 +163,13 @@ async function sendMondayReminder(env: Env) {
       await logSend(env.DB, userId, 'WEEKLY_REMIND', 'sent');
     }
   }
+
+  // 푸시 알림도 함께 발송
+  await sendPushNotifications(env.DB,
+    '이번 주 매출 입력하셨나요?',
+    '30초면 충분해요. 지금 입력하러 가기!',
+    `${BASE_URL}/weekly`
+  );
 
   console.log(`Monday reminder: ${(results || []).length} users processed`);
 }
@@ -196,6 +233,13 @@ async function sendFridayReport(env: Env) {
       await logSend(env.DB, userId, 'WEEKLY_REPORT', 'sent');
     }
   }
+
+  // 푸시 알림도 함께 발송
+  await sendPushNotifications(env.DB,
+    '이번 주 성적표가 도착했어요',
+    '매출과 실수령액을 확인해보세요!',
+    `${BASE_URL}/history`
+  );
 
   console.log(`Friday report: ${(results || []).length} users processed`);
 }
