@@ -1,0 +1,57 @@
+name: Deploy Check
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    name: Smoke Test (pro.genomic.cc)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Wait for Cloudflare Pages deploy
+        run: |
+          echo "Waiting for Cloudflare Pages to build and deploy..."
+          sleep 90
+
+      - name: Smoke Test - Landing Page
+        run: |
+          STATUS=$(curl -o /dev/null -sw "%{http_code}" --retry 3 --retry-delay 10 https://pro.genomic.cc)
+          if [ "$STATUS" != "200" ]; then
+            echo "Landing page failed: HTTP $STATUS"
+            exit 1
+          fi
+          echo "Landing page OK (HTTP $STATUS)"
+
+      - name: Smoke Test - Calc Page
+        run: |
+          STATUS=$(curl -o /dev/null -sw "%{http_code}" --retry 3 --retry-delay 5 https://pro.genomic.cc/calc)
+          if [ "$STATUS" != "200" ]; then
+            echo "Calc page failed: HTTP $STATUS"
+            exit 1
+          fi
+          echo "Calc page OK (HTTP $STATUS)"
+
+      - name: Smoke Test - Calc API
+        run: |
+          RESPONSE=$(curl -sf --retry 3 --retry-delay 5 -X POST https://pro.genomic.cc/api/calc \
+            -H "Content-Type: application/json" \
+            -d '{"bizType":"restaurant","taxType":"general","revenue":20000000,"costRent":2400000,"costLabor":5000000,"costMaterial":6400000,"costOther":1200000,"empCount":1,"workDays":25,"workHours":10}')
+          echo "Calc API response: $RESPONSE"
+          echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); assert 'finalProfit' in d, 'Missing finalProfit'"
+          echo "Calc API OK"
