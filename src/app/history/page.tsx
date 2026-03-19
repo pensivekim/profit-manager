@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { fmtComma } from '@/lib/format';
 import {
   Chart as ChartJS,
@@ -56,9 +57,9 @@ export default function HistoryPage() {
             <p className="text-3xl mb-3">{"\uD83D\uDCCA"}</p>
             <p className="text-gray-600 mb-2">아직 기록이 없습니다</p>
             <p className="text-sm text-gray-400 mb-4">메인 페이지에서 계산하면 자동 저장됩니다</p>
-            <a href="/" className="inline-block py-2.5 px-6 rounded-xl bg-blue-600 text-white font-semibold">
+            <Link href="/" className="inline-block py-2.5 px-6 rounded-xl bg-blue-600 text-white font-semibold">
               계산하러 가기
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -135,9 +136,9 @@ export default function HistoryPage() {
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-gray-900">월별 내역</h1>
-          <a href="/" className="text-sm text-blue-600 font-medium">
+          <Link href="/" className="text-sm text-blue-600 font-medium">
             {"\u2190"} 계산기
-          </a>
+          </Link>
         </div>
 
         {/* 위험 경보 */}

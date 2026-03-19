@@ -1,6 +1,6 @@
 'use client';
 
-import { fmtKRW, fmtComma } from '@/lib/format';
+import { fmtComma } from '@/lib/format';
 
 interface Props {
   finalProfit: number;
