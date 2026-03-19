@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
-import { fmtComma } from '@/lib/format';
+import { fmtComma, fmtKRW } from '@/lib/format';
 import ResultSummary from '@/components/ResultSummary';
 import CostBars from '@/components/CostBars';
 import TaxDetail from '@/components/TaxDetail';
@@ -71,6 +71,9 @@ export default function CalcPage() {
   const [showAI, setShowAI] = useState(false);
   const [consultModal, setConsultModal] = useState<{ proType: string; proLabel: string } | null>(null);
 
+  // 포커스 상태 추적 (콤마 포맷용)
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+
   const bm = BENCHMARKS[bizType];
 
   const applyDefaults = useCallback((biz: BizType, rev: number) => {
@@ -117,27 +120,39 @@ export default function CalcPage() {
     }
   };
 
-  const costInput = (
+  // 금액 입력 (포커스: 숫자만, 블러: 콤마 포맷)
+  const moneyInput = (
+    fieldId: string,
     label: string,
     value: number,
     onChange: (v: number) => void,
-    avgPct: number,
+    avgPct?: number,
   ) => {
-    const actualPct = revenue > 0 ? Math.round(value / revenue * 100) : 0;
-    const over = actualPct > avgPct && avgPct > 0;
+    const isFocused = focusedField === fieldId;
+    const actualPct = avgPct !== undefined && revenue > 0 ? Math.round(value / revenue * 100) : null;
+    const over = actualPct !== null && avgPct !== undefined && actualPct > avgPct && avgPct > 0;
+
     return (
       <div>
         <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
           {label}
-          <span className={`ml-1 text-sm font-normal ${over ? 'text-red-600' : ''}`} style={{ color: over ? undefined : 'var(--text-hint)' }}>
-            (평균 {avgPct}%)
-          </span>
+          {avgPct !== undefined && (
+            <span className={`ml-1 text-sm font-normal ${over ? 'text-red-600' : ''}`} style={{ color: over ? undefined : 'var(--text-hint)' }}>
+              (평균 {avgPct}%)
+            </span>
+          )}
         </label>
         <div className="relative">
           <input
-            type="number"
-            value={value}
-            onChange={(e) => onChange(Number(e.target.value))}
+            type={isFocused ? 'number' : 'text'}
+            inputMode="numeric"
+            value={isFocused ? value : fmtComma(value)}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9-]/g, '');
+              onChange(Number(raw) || 0);
+            }}
+            onFocus={() => setFocusedField(fieldId)}
+            onBlur={() => setFocusedField(null)}
             step={100000}
             className="w-full rounded-lg border border-border px-4 py-3 text-right text-base outline-none"
             style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
@@ -145,11 +160,14 @@ export default function CalcPage() {
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>원</span>
         </div>
         <div className="flex justify-between mt-1">
-          <span className={`text-sm ${over ? 'text-red-600 font-semibold' : ''}`} style={{ color: over ? undefined : 'var(--text-hint)' }}>
-            {actualPct}%
-            {over && ' (초과!)'}
-          </span>
-          <span className="text-sm" style={{ color: 'var(--text-hint)' }}>{fmtComma(value)}원</span>
+          {actualPct !== null ? (
+            <span className={`text-sm ${over ? 'text-red-600 font-semibold' : ''}`} style={{ color: over ? undefined : 'var(--text-hint)' }}>
+              {actualPct}%{over && ' (초과!)'}
+            </span>
+          ) : (
+            <span />
+          )}
+          <span className="text-sm" style={{ color: 'var(--text-hint)' }}>{fmtKRW(value)}</span>
         </div>
       </div>
     );
@@ -235,30 +253,16 @@ export default function CalcPage() {
           </div>
 
           {/* 매출 */}
-          <div>
-            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>월 매출</label>
-            <div className="relative">
-              <input
-                type="number"
-                value={revenue}
-                onChange={(e) => handleRevenueChange(Number(e.target.value))}
-                step={100000}
-                className="w-full rounded-lg border border-border px-4 py-3 text-right text-base outline-none"
-                style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>원</span>
-            </div>
-            <p className="text-sm mt-1 text-right" style={{ color: 'var(--text-hint)' }}>{fmtComma(revenue)}원</p>
-          </div>
+          {moneyInput('revenue', '월 매출', revenue, handleRevenueChange)}
 
           {/* 원가 4항목 */}
           <div className="pt-3 border-t border-border">
             <p className="text-base font-bold mb-3" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>월 지출 (원가)</p>
             <div className="grid grid-cols-2 gap-3">
-              {costInput('임대료', costRent, setCostRent, bm.rent)}
-              {costInput('인건비', costLabor, setCostLabor, bm.labor)}
-              {costInput('재료/매입', costMaterial, setCostMaterial, bm.material)}
-              {costInput('기타경비', costOther, setCostOther, bm.other)}
+              {moneyInput('rent', '임대료', costRent, setCostRent, bm.rent)}
+              {moneyInput('labor', '인건비', costLabor, setCostLabor, bm.labor)}
+              {moneyInput('material', '재료/매입', costMaterial, setCostMaterial, bm.material)}
+              {moneyInput('other', '기타경비', costOther, setCostOther, bm.other)}
             </div>
           </div>
 
@@ -285,7 +289,6 @@ export default function CalcPage() {
         {/* Results */}
         {result && (
           <div className="mt-6 space-y-4">
-            {/* 1. 실수령액 + 시급 + 요약 카드 */}
             <ResultSummary
               finalProfit={result.finalProfit}
               hourlyWage={result.hourlyWage}
@@ -294,8 +297,6 @@ export default function CalcPage() {
               opCost={result.opCost}
               totalTax={result.totalTax}
             />
-
-            {/* 2. 세금 내역 (접기/펼치기) */}
             <TaxDetail
               vatProvision={result.vatProvision}
               monthlyIncomeTax={result.monthlyIncomeTax}
@@ -304,8 +305,6 @@ export default function CalcPage() {
               taxType={taxType}
               empCount={empCount}
             />
-
-            {/* 3. 원가 분석 바 */}
             <CostBars
               bizType={bizType}
               rentPct={result.rentPct}
@@ -318,7 +317,6 @@ export default function CalcPage() {
               costOther={costOther}
             />
 
-            {/* 4. 하단 버튼 2개 */}
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setShowAI(true)}
@@ -339,7 +337,6 @@ export default function CalcPage() {
               </button>
             </div>
 
-            {/* 5. AI 조언 (버튼 클릭 시) */}
             {showAI && adviceCalcResult && (
               <AIAdvice
                 calcResult={adviceCalcResult}
@@ -355,7 +352,6 @@ export default function CalcPage() {
               />
             )}
 
-            {/* 6. 전문가 연결 */}
             <div id="pro-section">
               <ProCards
                 monthlyIncomeTax={result.monthlyIncomeTax}
@@ -368,22 +364,19 @@ export default function CalcPage() {
               />
             </div>
 
-            {/* 월별 내역 */}
             <div className="text-center">
               <Link href="/history" className="inline-flex items-center gap-1 text-base font-semibold hover:underline" style={{ minHeight: '48px', lineHeight: 'var(--line-height)', color: 'var(--accent)' }}>
-                {"\uD83D\uDCCA"} 월별 내역 보기 {"\u2192"}
+                {"\uD83D\uDCCA"} 주별 내역 보기 {"\u2192"}
               </Link>
             </div>
           </div>
         )}
 
-        {/* Footer */}
         <p className="text-center text-sm mt-8 pb-4" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}>
           본 계산기는 참고용이며, 정확한 세무 상담은 전문가에게 문의하세요.
         </p>
       </div>
 
-      {/* Consult Modal */}
       {consultModal && (
         <ConsultModal
           proType={consultModal.proType}

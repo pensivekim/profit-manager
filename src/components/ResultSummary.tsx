@@ -1,6 +1,6 @@
 'use client';
 
-import { fmtComma } from '@/lib/format';
+import { fmtComma, fmtKRW } from '@/lib/format';
 
 interface Props {
   finalProfit: number;
@@ -29,7 +29,7 @@ export default function ResultSummary({ finalProfit, hourlyWage, totalHours, rev
           {isLoss ? '이번 달 적자입니다' : '이번 달 내 손에 남는 돈'}
         </p>
         <p style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', lineHeight: '1.3' }}>
-          {fmtComma(finalProfit)}원
+          {fmtKRW(finalProfit)}
         </p>
 
         {/* 시급 */}
@@ -60,15 +60,15 @@ export default function ResultSummary({ finalProfit, hourlyWage, totalHours, rev
       <div className="grid grid-cols-3 gap-2">
         <div className="rounded-xl p-3 border border-border text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
           <p className="text-sm" style={{ color: 'var(--text-hint)' }}>매출</p>
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--accent)' }}>{fmtComma(revenue)}원</p>
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--accent)' }}>{fmtKRW(revenue)}</p>
         </div>
         <div className="rounded-xl p-3 border border-border text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
           <p className="text-sm" style={{ color: 'var(--text-hint)' }}>운영비</p>
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--text-secondary)' }}>{fmtComma(opCost)}원</p>
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--text-secondary)' }}>{fmtKRW(opCost)}</p>
         </div>
         <div className="rounded-xl p-3 border border-border text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
           <p className="text-sm" style={{ color: 'var(--text-hint)' }}>세금합계</p>
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--danger)' }}>{fmtComma(totalTax)}원</p>
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--danger)' }}>{fmtKRW(totalTax)}</p>
         </div>
       </div>
     </div>

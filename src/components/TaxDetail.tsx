@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { fmtComma } from '@/lib/format';
+import { fmtKRW } from '@/lib/format';
 
 interface Props {
   vatProvision: number;
@@ -49,7 +49,7 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
         </span>
         <div className="flex items-center gap-2">
           <span className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-base)' }}>
-            월 {fmtComma(totalTax)}원
+            월 {fmtKRW(totalTax)}
           </span>
           <span style={{ color: 'var(--text-hint)' }}>{open ? '\u25B2' : '\u25BC'}</span>
         </div>
@@ -65,14 +65,14 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
                   <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>{r.sub}</p>
                 </div>
                 <p className="font-bold whitespace-nowrap" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>
-                  {fmtComma(r.amount)}원
+                  {fmtKRW(r.amount)}
                 </p>
               </div>
             ))}
           </div>
           <div className="mt-2 pt-3 border-t-2 border-border flex justify-between" style={{ lineHeight: 'var(--line-height)' }}>
             <span className="font-bold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>월 세금 합계</span>
-            <span className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-lg)' }}>{fmtComma(totalTax)}원</span>
+            <span className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-lg)' }}>{fmtKRW(totalTax)}</span>
           </div>
         </div>
       )}
