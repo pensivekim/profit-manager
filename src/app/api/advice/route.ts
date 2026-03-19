@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma } from '@/lib/format';
 
+export const runtime = 'edge';
+
 // Cloudflare AI Gateway 경유 Gemini
 const GATEWAY_BASE = 'https://gateway.ai.cloudflare.com/v1/f6c784dae2ac774f3f877b4ba39a88d6/carebot/google-ai-studio';
 const MODEL = 'gemini-2.5-flash-lite';
