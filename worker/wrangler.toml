@@ -18,3 +18,4 @@ database_id = "cf3bc1f7-022f-4a06-ba70-775344d31e85"
 [vars]
 # Secrets: npx wrangler secret put <KEY>
 # NHN_APPKEY, NHN_SECRET_KEY, NHN_SENDER_KEY, ADMIN_PHONE
+# VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY

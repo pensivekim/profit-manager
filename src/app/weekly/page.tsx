@@ -104,7 +104,7 @@ export default function WeeklyPage() {
         <div className="max-w-lg mx-auto px-4 py-8">
           {/* AI 한마디 */}
           {result.aiComment && (
-            <div className="rounded-2xl p-5 mb-4" style={{ background: '#e8f5e9', lineHeight: 'var(--line-height)' }}>
+            <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--success-light)', lineHeight: 'var(--line-height)' }}>
               <p style={{ fontSize: 'var(--font-size-base)', color: 'var(--success)' }}>
                 {"\uD83E\uDD16"} {result.aiComment}
               </p>

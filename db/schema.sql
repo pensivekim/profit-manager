@@ -35,10 +35,11 @@ CREATE TABLE IF NOT EXISTS monthly_records (
 -- 전문가 상담 요청
 CREATE TABLE IF NOT EXISTS consult_requests (
   id TEXT PRIMARY KEY,
-  business_id TEXT NOT NULL,
   pro_type TEXT NOT NULL,
-  status TEXT DEFAULT 'pending',
+  name TEXT,
+  phone TEXT,
   message TEXT,
   record_snapshot TEXT,
+  status TEXT DEFAULT 'pending',
   created_at TEXT DEFAULT (datetime('now'))
 );

@@ -68,7 +68,7 @@ export default function ResultSummary({ finalProfit, hourlyWage, totalHours, rev
         </div>
         <div className="rounded-xl p-3 border border-border text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
           <p className="text-sm" style={{ color: 'var(--text-hint)' }}>세금합계</p>
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: '#dc2626' }}>{fmtComma(totalTax)}원</p>
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--danger)' }}>{fmtComma(totalTax)}원</p>
         </div>
       </div>
     </div>

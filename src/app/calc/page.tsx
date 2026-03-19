@@ -191,7 +191,7 @@ export default function CalcPage() {
       <div className="max-w-lg mx-auto px-4 py-6 pb-24 sm:pb-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <Link href="/" className="text-base text-blue-600 font-semibold" style={{ lineHeight: 'var(--line-height)' }}>{"\u2190"} 홈</Link>
+          <Link href="/" className="text-base font-semibold" style={{ lineHeight: 'var(--line-height)', color: 'var(--accent)' }}>{"\u2190"} 홈</Link>
           <div className="text-center flex-1">
             <h1 className="text-xl font-bold" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>내 손에 얼마 남았나?</h1>
           </div>
@@ -223,12 +223,10 @@ export default function CalcPage() {
                 <button
                   key={t}
                   onClick={() => setTaxType(t)}
-                  className={`py-3 rounded-lg text-base font-semibold transition-all ${
-                    taxType === t
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : ''
-                  }`}
-                  style={taxType === t ? { lineHeight: 'var(--line-height)' } : { lineHeight: 'var(--line-height)', background: 'var(--bg-page)', color: 'var(--text-secondary)' }}
+                  className="py-3 rounded-lg text-base font-semibold transition-all"
+                  style={taxType === t
+                    ? { lineHeight: 'var(--line-height)', background: 'var(--accent)', color: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }
+                    : { lineHeight: 'var(--line-height)', background: 'var(--bg-page)', color: 'var(--text-secondary)' }}
                 >
                   {t === 'general' ? '일반과세자' : '간이과세자'}
                 </button>
@@ -277,8 +275,8 @@ export default function CalcPage() {
           <button
             onClick={handleCalc}
             disabled={loading}
-            className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)' }}
+            className="w-full py-4 rounded-xl text-white font-bold text-lg hover:opacity-90 active:opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)', background: 'var(--accent)' }}
           >
             {loading ? '계산 중...' : '계산하기'}
           </button>

@@ -246,7 +246,7 @@ export default function HistoryPage() {
                   <div>재료비: <span className="font-bold">{fmtComma(selectedWeek.cost_material || 0)}원</span></div>
                 </div>
                 {selectedWeek.ai_comment && (
-                  <div className="mt-3 rounded-lg p-3" style={{ background: '#e8f5e9' }}>
+                  <div className="mt-3 rounded-lg p-3" style={{ background: 'var(--success-light)' }}>
                     <p style={{ fontSize: 'var(--font-size-base)', color: 'var(--success)' }}>{"\uD83E\uDD16"} {selectedWeek.ai_comment}</p>
                   </div>
                 )}
