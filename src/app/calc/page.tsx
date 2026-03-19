@@ -4,6 +4,8 @@ import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma, fmtKRW } from '@/lib/format';
+import { useAuth } from '@/hooks/useAuth';
+import Header from '@/components/Header';
 import ResultSummary from '@/components/ResultSummary';
 import CostBars from '@/components/CostBars';
 import TaxDetail from '@/components/TaxDetail';
@@ -70,6 +72,7 @@ export default function CalcPage() {
   const [loading, setLoading] = useState(false);
   const [showAI, setShowAI] = useState(false);
   const [consultModal, setConsultModal] = useState<{ proType: string; proLabel: string } | null>(null);
+  const { user } = useAuth();
 
   // 포커스 상태 추적 (콤마 포맷용)
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -205,15 +208,9 @@ export default function CalcPage() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-page)' }}>
-      <div className="max-w-lg mx-auto px-4 py-6 pb-24 sm:pb-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <Link href="/" className="text-base font-semibold" style={{ lineHeight: 'var(--line-height)', color: 'var(--accent)' }}>{"\u2190"} 홈</Link>
-          <div className="text-center flex-1">
-            <h1 className="text-xl font-bold" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>내 손에 얼마 남았나?</h1>
-          </div>
-          <div className="w-10" />
-        </div>
+      <Header />
+      <div className="max-w-lg mx-auto px-4 pb-24 sm:pb-8">
+        <h1 className="text-xl font-bold text-center mb-5" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>내 손에 얼마 남았나?</h1>
 
         {/* Input Form */}
         <div className="rounded-2xl p-6 shadow-sm border border-border space-y-5" style={{ background: 'var(--bg-card)' }}>
@@ -362,6 +359,20 @@ export default function CalcPage() {
                 onConsult={(proType, proLabel) => setConsultModal({ proType, proLabel })}
               />
             </div>
+
+            {/* 로그인 유도 */}
+            {!user && (
+              <Link href="/login"
+                className="block rounded-xl p-4 text-center border-2 border-dashed"
+                style={{ borderColor: 'var(--accent)', background: 'var(--accent-light)' }}>
+                <p className="font-bold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--accent)' }}>
+                  {"\uD83D\uDD12"} 기록을 저장하려면 로그인하세요
+                </p>
+                <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-hint)', marginTop: '4px' }}>
+                  전화번호만으로 10초 가입
+                </p>
+              </Link>
+            )}
 
             <div className="text-center">
               <Link href="/history" className="inline-flex items-center gap-1 text-base font-semibold hover:underline" style={{ minHeight: '48px', lineHeight: 'var(--line-height)', color: 'var(--accent)' }}>

@@ -9,48 +9,41 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallBanner() {
-  const [state, setState] = useState<{ show: boolean; isIOS: boolean; prompt: BeforeInstallPromptEvent | null }>({
-    show: false, isIOS: false, prompt: null,
-  });
+  const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [dismissed, setDismissed] = useState(true);
 
   useEffect(() => {
     if (isPWAInstalled()) return;
+    const d = localStorage.getItem('install_banner_dismissed');
+    if (d && (Date.now() - new Date(d).getTime()) / 86400000 < 7) return;
 
-    const dismissed = localStorage.getItem('install_banner_dismissed');
-    if (dismissed) {
-      const daysSince = (Date.now() - new Date(dismissed).getTime()) / (1000 * 60 * 60 * 24);
-      if (daysSince < 7) return;
-    }
-
-    const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isiOS) {
-      setState({ show: true, isIOS: true, prompt: null });
-      return;
-    }
+    // show banner after short delay to avoid sync setState
+    const timer = setTimeout(() => setDismissed(false), 500);
 
     const handler = (e: Event) => {
       e.preventDefault();
-      setState({ show: true, isIOS: false, prompt: e as BeforeInstallPromptEvent });
+      setPrompt(e as BeforeInstallPromptEvent);
     };
     window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { clearTimeout(timer); window.removeEventListener('beforeinstallprompt', handler); };
   }, []);
 
+  if (dismissed) return null;
+
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
   const handleInstall = async () => {
-    if (state.prompt) {
-      await state.prompt.prompt();
-      const { outcome } = await state.prompt.userChoice;
-      if (outcome === 'accepted') setState(s => ({ ...s, show: false }));
+    if (prompt) {
+      await prompt.prompt();
+      const { outcome } = await prompt.userChoice;
+      if (outcome === 'accepted') setDismissed(true);
     }
   };
 
   const handleDismiss = () => {
     localStorage.setItem('install_banner_dismissed', new Date().toISOString());
-    setState(s => ({ ...s, show: false }));
+    setDismissed(true);
   };
-
-  if (!state.show) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4">
@@ -64,17 +57,13 @@ export default function InstallBanner() {
             <p style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
               앱처럼 바로 열고, 매주 알림도 받을 수 있어요
             </p>
-
-            {state.isIOS ? (
-              <p className="font-semibold mt-2" style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--accent)' }}>
+            {isIOS ? (
+              <p className="font-semibold mt-2" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--accent)' }}>
                 Safari {"\u2192"} 공유 버튼 {"\u2192"} 홈 화면에 추가
               </p>
             ) : (
-              <button
-                onClick={handleInstall}
-                className="mt-2 py-2.5 px-5 rounded-lg text-white font-bold"
-                style={{ fontSize: 'var(--font-size-base)', minHeight: '44px', background: 'var(--accent)' }}
-              >
+              <button onClick={handleInstall} className="mt-2 py-2.5 px-5 rounded-lg text-white font-bold"
+                style={{ fontSize: 'var(--font-size-base)', minHeight: '44px', background: 'var(--accent)' }}>
                 홈화면에 추가
               </button>
             )}
