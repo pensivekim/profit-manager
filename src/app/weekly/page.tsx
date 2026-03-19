@@ -1,85 +1,91 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma } from '@/lib/format';
 
-const BIZ_OPTIONS: { value: BizType; label: string }[] = [
-  { value: 'beauty', label: '미용실/뷰티' },
-  { value: 'restaurant', label: '식당/카페' },
-  { value: 'retail', label: '소매/편의점' },
-  { value: 'manufacture', label: '제조/공방' },
-  { value: 'service', label: '서비스/학원/세탁' },
-  { value: 'delivery', label: '배달/퀵/대리운전' },
-  { value: 'freelance', label: '프리랜서/1인사업' },
-  { value: 'directsales', label: '방문판매/네트워크마케팅' },
-  { value: 'gig', label: '특수고용/플랫폼노동' },
-];
-
-function getWeekLabel(): string {
+function getWeekRange(): { label: string; start: string } {
   const now = new Date();
   const day = now.getDay();
   const diff = day === 0 ? 6 : day - 1;
   const mon = new Date(now);
   mon.setDate(now.getDate() - diff);
-  const sun = new Date(mon);
-  sun.setDate(mon.getDate() + 6);
-  return `${mon.getMonth() + 1}/${mon.getDate()} ~ ${sun.getMonth() + 1}/${sun.getDate()}`;
+  const fri = new Date(mon);
+  fri.setDate(mon.getDate() + 4);
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const label = `${mon.getMonth() + 1}/${mon.getDate()}(${days[mon.getDay()]}) ~ ${fri.getMonth() + 1}/${fri.getDate()}(${days[fri.getDay()]})`;
+  return { label, start: mon.toISOString().slice(0, 10) };
 }
 
-function calcDefaults(biz: BizType, rev: number) {
-  const bm = BENCHMARKS[biz];
-  return {
-    costRent: Math.round(rev * bm.rent / 100),
-    costLabor: Math.round(rev * bm.labor / 100),
-    costMaterial: Math.round(rev * bm.material / 100),
-    costOther: Math.round(rev * bm.other / 100),
-  };
+interface WeeklyResult {
+  finalProfit: number;
+  hourlyWage: number;
+  aiComment: string;
+  diff: string;
+  userName: string;
 }
 
 export default function WeeklyPage() {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [bizType, setBizType] = useState<BizType>('restaurant');
-  const [taxType, setTaxType] = useState<'general' | 'simplified'>('general');
-  const [revenue, setRevenue] = useState(5000000);
-  const d = calcDefaults('restaurant', 5000000);
-  const [costRent, setCostRent] = useState(d.costRent);
-  const [costLabor, setCostLabor] = useState(d.costLabor);
-  const [costMaterial, setCostMaterial] = useState(d.costMaterial);
-  const [costOther, setCostOther] = useState(d.costOther);
-  const [empCount, setEmpCount] = useState(0);
+  const [revenue, setRevenue] = useState('');
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
-  const [result, setResult] = useState<{ finalProfit: number; hourlyWage: number } | null>(null);
+  const [result, setResult] = useState<WeeklyResult | null>(null);
+  const [userId, setUserId] = useState('');
+  const [isNewUser, setIsNewUser] = useState(false);
 
-  const applyDefaults = useCallback((biz: BizType, rev: number) => {
-    const dd = calcDefaults(biz, rev);
-    setCostRent(dd.costRent);
-    setCostLabor(dd.costLabor);
-    setCostMaterial(dd.costMaterial);
-    setCostOther(dd.costOther);
+  const week = useMemo(() => getWeekRange(), []);
+
+  // URL ?t= 파라미터로 자동 로그인
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('t');
+    if (token) {
+      setUserId(token);
+      localStorage.setItem('pro_user_id', token);
+    } else {
+      const saved = localStorage.getItem('pro_user_id');
+      if (saved) {
+        setUserId(saved);
+      } else {
+        setIsNewUser(true);
+      }
+    }
   }, []);
 
+  // 신규 사용자: 설정 페이지로
+  if (isNewUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F5F0E8' }}>
+        <div className="max-w-lg mx-auto px-4 text-center">
+          <p className="text-4xl mb-4">{"\uD83D\uDC4B"}</p>
+          <h2 className="font-bold text-[#3a3025] mb-2" style={{ fontSize: '20px', lineHeight: '1.8' }}>
+            처음이시네요!
+          </h2>
+          <p className="text-[#5a4a3a] mb-6" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+            1분만 투자해서 기본 정보를 설정하면<br />
+            매주 매출만 입력하시면 돼요.
+          </p>
+          <Link href="/settings" className="block w-full py-4 rounded-xl bg-[#2D5A8E] text-white font-bold"
+            style={{ fontSize: '18px', minHeight: '52px', lineHeight: '2.2' }}>
+            기본 설정하기
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const handleSubmit = async () => {
-    if (!phone.trim()) { alert('전화번호를 입력해주세요'); return; }
-    if (!revenue) { alert('매출을 입력해주세요'); return; }
+    const rev = Number(revenue.replace(/,/g, ''));
+    if (!rev || rev <= 0) { alert('매출을 입력해주세요'); return; }
     setLoading(true);
     try {
       const res = await fetch('/api/weekly', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name, phone: phone.replace(/-/g, ''), bizType, taxType, revenue,
-          costRent, costLabor, costMaterial, costOther, empCount,
-          workDays: 6, workHours: 10,
-        }),
+        body: JSON.stringify({ userId, revenue: rev }),
       });
       const data = await res.json();
       if (data.success) {
-        setResult({ finalProfit: data.finalProfit, hourlyWage: data.hourlyWage });
-        setDone(true);
+        setResult(data);
       } else {
         alert(data.error || '저장 실패');
       }
@@ -90,33 +96,43 @@ export default function WeeklyPage() {
     }
   };
 
-  const weekLabel = getWeekLabel();
-  const bm = BENCHMARKS[bizType];
-
-  const inputStyle = "w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-[#3a3025] focus:border-[#2D5A8E] focus:ring-1 focus:ring-[#2D5A8E] outline-none";
-
-  if (done && result) {
+  // 결과 화면
+  if (result) {
     const isLoss = result.finalProfit < 0;
     return (
       <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
-        <div className="max-w-lg mx-auto px-4 py-8 text-center">
-          <p className="text-5xl mb-4">{isLoss ? '\uD83D\uDE1F' : '\uD83C\uDF89'}</p>
-          <h2 className="font-bold text-[#3a3025] mb-2" style={{ fontSize: '20px', lineHeight: '1.8' }}>
-            이번 주 기록 완료!
-          </h2>
-          <div className={`rounded-2xl p-6 text-white mb-4 ${isLoss ? 'bg-red-500' : 'bg-[#2D5A8E]'}`}>
-            <p className="opacity-80 mb-1" style={{ fontSize: '16px' }}>이번 주 실수령액</p>
-            <p style={{ fontSize: '32px', fontWeight: 'bold' }}>{fmtComma(result.finalProfit)}원</p>
-            <p className="opacity-70 mt-2" style={{ fontSize: '16px' }}>시간당 {fmtComma(result.hourlyWage)}원</p>
+        <div className="max-w-lg mx-auto px-4 py-8">
+          {/* AI 한마디 */}
+          {result.aiComment && (
+            <div className="rounded-2xl p-5 mb-4" style={{ background: '#e8f5e9', lineHeight: '1.8' }}>
+              <p className="text-[#2e7d32]" style={{ fontSize: '16px' }}>
+                {"\uD83E\uDD16"} {result.aiComment}
+              </p>
+            </div>
+          )}
+
+          {/* 실수령액 */}
+          <div className={`rounded-2xl p-6 text-white text-center mb-4 ${isLoss ? 'bg-red-500' : 'bg-[#2D5A8E]'}`}>
+            <p className="opacity-80 mb-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+              {result.userName}님, 이번 주 실수령 예상액
+            </p>
+            <p style={{ fontSize: '36px', fontWeight: 'bold', lineHeight: '1.3' }}>
+              {fmtComma(result.finalProfit)}원
+            </p>
+            <div className="flex justify-center gap-6 mt-4 opacity-80" style={{ fontSize: '16px' }}>
+              <span>시급 {fmtComma(result.hourlyWage)}원</span>
+              <span>{result.diff}</span>
+            </div>
           </div>
-          <p className="text-[#5a4a3a] mb-6" style={{ fontSize: '16px', lineHeight: '1.8' }}>
-            매주 금요일 저녁에 성적표를 보내드릴게요!
-          </p>
+
+          {/* 버튼 */}
           <div className="space-y-3">
-            <Link href="/calc" className="block w-full py-3.5 rounded-xl bg-[#2D5A8E] text-white font-bold" style={{ fontSize: '16px', minHeight: '48px', lineHeight: '2.5' }}>
-              상세 분석 보기
+            <Link href="/calc" className="block w-full py-4 rounded-xl bg-[#2D5A8E] text-white font-bold text-center"
+              style={{ fontSize: '16px', minHeight: '52px', lineHeight: '2.2' }}>
+              자세한 분석 보기
             </Link>
-            <Link href="/" className="block w-full py-3.5 rounded-xl border-2 border-[#2D5A8E] text-[#2D5A8E] font-bold" style={{ fontSize: '16px', minHeight: '48px', lineHeight: '2.5' }}>
+            <Link href="/" className="block w-full py-4 rounded-xl border-2 border-[#2D5A8E] text-[#2D5A8E] font-bold text-center"
+              style={{ fontSize: '16px', minHeight: '52px', lineHeight: '2.2' }}>
               홈으로
             </Link>
           </div>
@@ -125,95 +141,63 @@ export default function WeeklyPage() {
     );
   }
 
+  // 입력 화면 (매출 1개만)
   return (
-    <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
-      <div className="max-w-lg mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-5">
-          <Link href="/" className="text-base text-[#2D5A8E] font-semibold">{"\u2190"} 홈</Link>
-          <div className="text-center flex-1">
-            <h1 className="font-bold text-[#3a3025]" style={{ fontSize: '18px', lineHeight: '1.8' }}>이번 주 매출 입력</h1>
-            <p className="text-[#a09080]" style={{ fontSize: '14px' }}>{weekLabel}</p>
-          </div>
-          <div className="w-10" />
+    <div className="min-h-screen flex flex-col" style={{ background: '#F5F0E8' }}>
+      <div className="max-w-lg mx-auto px-4 py-6 flex-1 flex flex-col">
+        {/* 상단 */}
+        <div className="text-center mb-8 pt-4">
+          <h1 className="font-bold text-[#3a3025]" style={{ fontSize: '22px', lineHeight: '1.8' }}>
+            이번 주 매출 입력
+          </h1>
+          <p className="text-[#a09080] mt-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+            {week.label}
+          </p>
         </div>
 
-        <div className="rounded-2xl p-5 shadow-sm border border-[#e0d5c5] space-y-4" style={{ background: '#FFFDF7' }}>
-          {/* 이름/전화 */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>이름</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="사장님 성함"
-                className={inputStyle} style={{ fontSize: '16px' }} />
-            </div>
-            <div>
-              <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>전화번호</label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="01012345678"
-                className={inputStyle} style={{ fontSize: '16px' }} />
-            </div>
-          </div>
-
-          {/* 업종 */}
-          <div>
-            <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>업종</label>
-            <select value={bizType} onChange={(e) => { const b = e.target.value as BizType; setBizType(b); applyDefaults(b, revenue); }}
-              className={inputStyle} style={{ fontSize: '16px' }}>
-              {BIZ_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
-
-          {/* 과세유형 */}
-          <div className="grid grid-cols-2 gap-2">
-            {(['general', 'simplified'] as const).map((t) => (
-              <button key={t} onClick={() => setTaxType(t)}
-                className={`py-3 rounded-lg font-semibold transition-all ${taxType === t ? 'bg-[#2D5A8E] text-white' : 'bg-[#F5F0E8] text-[#5a4a3a]'}`}
-                style={{ fontSize: '16px', minHeight: '48px' }}>
-                {t === 'general' ? '일반과세' : '간이과세'}
-              </button>
-            ))}
-          </div>
-
-          {/* 매출 */}
-          <div>
-            <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>이번 주 매출</label>
+        {/* 매출 입력 - 딱 1개 */}
+        <div className="flex-1 flex flex-col justify-center">
+          <div className="rounded-2xl p-6 border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
+            <label className="block font-bold text-[#3a3025] mb-3 text-center" style={{ fontSize: '18px', lineHeight: '1.8' }}>
+              이번 주 총 매출이 얼마인가요?
+            </label>
             <div className="relative">
-              <input type="number" value={revenue} onChange={(e) => { const r = Number(e.target.value); setRevenue(r); applyDefaults(bizType, r); }}
-                step={100000} className={`${inputStyle} text-right`} style={{ fontSize: '16px' }} />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a09080] text-sm">원</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={revenue}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^0-9]/g, '');
+                  setRevenue(raw ? Number(raw).toLocaleString('ko-KR') : '');
+                }}
+                placeholder="0"
+                autoFocus
+                className="w-full rounded-xl border-2 border-[#2D5A8E] bg-white px-5 text-right text-[#3a3025] font-bold focus:ring-2 focus:ring-[#2D5A8E] outline-none"
+                style={{ fontSize: '28px', height: '64px', lineHeight: '1.5' }}
+              />
+              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[#a09080] font-bold" style={{ fontSize: '20px' }}>원</span>
             </div>
-            <p className="text-sm text-[#a09080] mt-1 text-right">{fmtComma(revenue)}원</p>
-          </div>
 
-          {/* 지출 */}
-          <div className="pt-3 border-t border-[#e0d5c5]">
-            <p className="font-bold text-[#3a3025] mb-2" style={{ fontSize: '16px' }}>이번 주 지출</p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: `임대료 (평균${bm.rent}%)`, val: costRent, set: setCostRent },
-                { label: `인건비 (평균${bm.labor}%)`, val: costLabor, set: setCostLabor },
-                { label: `재료비 (평균${bm.material}%)`, val: costMaterial, set: setCostMaterial },
-                { label: `기타 (평균${bm.other}%)`, val: costOther, set: setCostOther },
-              ].map((c) => (
-                <div key={c.label}>
-                  <label className="block text-[#5a4a3a] mb-1" style={{ fontSize: '14px' }}>{c.label}</label>
-                  <input type="number" value={c.val} onChange={(e) => c.set(Number(e.target.value))}
-                    step={50000} className={`${inputStyle} text-right`} style={{ fontSize: '16px' }} />
-                </div>
-              ))}
+            <p className="text-center text-[#a09080] mt-3" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+              비용은 처음 설정한 고정값이 적용돼요
+            </p>
+            <div className="text-center mt-1">
+              <Link href="/settings" className="text-[#2D5A8E] font-semibold" style={{ fontSize: '14px' }}>
+                비용 수정 {"\u2192"}
+              </Link>
             </div>
           </div>
+        </div>
 
-          {/* 직원 */}
-          <div>
-            <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>직원 수</label>
-            <input type="number" value={empCount} onChange={(e) => setEmpCount(Number(e.target.value))}
-              className={`${inputStyle} text-right`} style={{ fontSize: '16px' }} />
-          </div>
-
-          {/* 제출 */}
-          <button onClick={handleSubmit} disabled={loading}
-            className="w-full py-4 rounded-xl bg-[#2D5A8E] text-white font-bold hover:bg-[#24496f] disabled:opacity-50 transition-colors"
-            style={{ fontSize: '18px', minHeight: '48px' }}>
-            {loading ? '저장 중...' : '이번 주 기록하기'}
+        {/* 완료 버튼 */}
+        <div className="pb-6 pt-4">
+          <button
+            onClick={handleSubmit}
+            disabled={loading || !revenue}
+            className="w-full rounded-xl bg-[#2D5A8E] text-white font-bold hover:bg-[#24496f] disabled:opacity-40 transition-colors"
+            style={{ fontSize: '20px', height: '56px', lineHeight: '1.5' }}
+          >
+            {loading ? '계산 중...' : '완료'}
           </button>
         </div>
       </div>
