@@ -1,0 +1,19 @@
+name = "profit-cron"
+main = "cron.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = [
+  "0 0 * * 1",
+  "0 9 * * 5"
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "profit-manager-db"
+database_id = "cf3bc1f7-022f-4a06-ba70-775344d31e85"
+
+[vars]
+# Secrets: npx wrangler secret put <KEY>
+# NHN_APPKEY, NHN_SECRET_KEY, NHN_SENDER_KEY, ADMIN_PHONE
