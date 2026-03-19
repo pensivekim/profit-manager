@@ -9,7 +9,6 @@ import CostBars from '@/components/CostBars';
 import TaxDetail from '@/components/TaxDetail';
 import ProCards from '@/components/ProCards';
 import AIAdvice from '@/components/AIAdvice';
-import TabNav from '@/components/TabNav';
 import ConsultModal from '@/components/ConsultModal';
 
 const BIZ_OPTIONS: { value: BizType; label: string }[] = [
@@ -69,7 +68,7 @@ export default function CalcPage() {
   const [workHours, setWorkHours] = useState(10);
   const [result, setResult] = useState<CalcResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [showAI, setShowAI] = useState(false);
   const [consultModal, setConsultModal] = useState<{ proType: string; proLabel: string } | null>(null);
 
   const bm = BENCHMARKS[bizType];
@@ -110,7 +109,7 @@ export default function CalcPage() {
         return;
       }
       setResult(data);
-      setActiveTab('overview');
+      setShowAI(false);
     } catch {
       alert('서버 오류가 발생했습니다');
     } finally {
@@ -287,75 +286,93 @@ export default function CalcPage() {
 
         {/* Results */}
         {result && (
-          <>
-            <div className="mt-6">
-              <ResultSummary
-                finalProfit={result.finalProfit}
-                hourlyWage={result.hourlyWage}
-                totalHours={result.totalHours}
+          <div className="mt-6 space-y-4">
+            {/* 1. 실수령액 + 시급 + 요약 카드 */}
+            <ResultSummary
+              finalProfit={result.finalProfit}
+              hourlyWage={result.hourlyWage}
+              totalHours={result.totalHours}
+              revenue={revenue}
+              opCost={result.opCost}
+              totalTax={result.totalTax}
+            />
+
+            {/* 2. 세금 내역 (접기/펼치기) */}
+            <TaxDetail
+              vatProvision={result.vatProvision}
+              monthlyIncomeTax={result.monthlyIncomeTax}
+              insuranceCost={result.insuranceCost}
+              totalTax={result.totalTax}
+              taxType={taxType}
+              empCount={empCount}
+            />
+
+            {/* 3. 원가 분석 바 */}
+            <CostBars
+              bizType={bizType}
+              rentPct={result.rentPct}
+              laborPct={result.laborPct}
+              materialPct={result.materialPct}
+              otherPct={result.otherPct}
+              costRent={costRent}
+              costLabor={costLabor}
+              costMaterial={costMaterial}
+              costOther={costOther}
+            />
+
+            {/* 4. 하단 버튼 2개 */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setShowAI(true)}
+                className="py-4 rounded-xl font-bold text-white text-base transition-colors"
+                style={{ background: '#2D5A8E', minHeight: '48px', lineHeight: '1.8' }}
+              >
+                {"\uD83E\uDD16"} AI 경영 조언
+              </button>
+              <button
+                onClick={() => {
+                  const el = document.getElementById('pro-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="py-4 rounded-xl font-bold text-[#2D5A8E] text-base border-2 border-[#2D5A8E] transition-colors hover:bg-[#2D5A8E]/10"
+                style={{ minHeight: '48px', lineHeight: '1.8' }}
+              >
+                {"\uD83D\uDC64"} 전문가 연결
+              </button>
+            </div>
+
+            {/* 5. AI 조언 (버튼 클릭 시) */}
+            {showAI && adviceCalcResult && (
+              <AIAdvice
+                calcResult={adviceCalcResult}
+                bizType={bizType}
+                taxType={taxType}
                 revenue={revenue}
+                empCount={empCount}
+                autoFetch={showAI}
+                onProLink={() => {
+                  const el = document.getElementById('pro-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+            )}
+
+            {/* 6. 전문가 연결 */}
+            <div id="pro-section">
+              <ProCards
+                monthlyIncomeTax={result.monthlyIncomeTax}
+                empCount={empCount}
+                finalProfit={result.finalProfit}
+                onConsult={(proType, proLabel) => setConsultModal({ proType, proLabel })}
               />
             </div>
 
-            <div className="mt-4">
-              <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
+            {/* 월별 내역 */}
+            <div className="text-center">
+              <Link href="/history" className="inline-flex items-center gap-1 text-base text-[#2D5A8E] font-semibold hover:underline" style={{ minHeight: '48px', lineHeight: '1.8' }}>
+                {"\uD83D\uDCCA"} 월별 내역 보기 {"\u2192"}
+              </Link>
             </div>
-
-            <div className="mt-4 sm:mt-0">
-              {activeTab === 'overview' && (
-                <CostBars
-                  bizType={bizType}
-                  rentPct={result.rentPct}
-                  laborPct={result.laborPct}
-                  materialPct={result.materialPct}
-                  otherPct={result.otherPct}
-                  costRent={costRent}
-                  costLabor={costLabor}
-                  costMaterial={costMaterial}
-                  costOther={costOther}
-                />
-              )}
-
-              {activeTab === 'tax' && (
-                <TaxDetail
-                  vatProvision={result.vatProvision}
-                  monthlyIncomeTax={result.monthlyIncomeTax}
-                  insuranceCost={result.insuranceCost}
-                  totalTax={result.totalTax}
-                  taxType={taxType}
-                />
-              )}
-
-              {activeTab === 'ai' && adviceCalcResult && (
-                <AIAdvice
-                  calcResult={adviceCalcResult}
-                  bizType={bizType}
-                  taxType={taxType}
-                  revenue={revenue}
-                  empCount={empCount}
-                  autoFetch={activeTab === 'ai'}
-                  onProLink={setActiveTab}
-                />
-              )}
-
-              {activeTab === 'pro' && (
-                <ProCards
-                  monthlyIncomeTax={result.monthlyIncomeTax}
-                  empCount={empCount}
-                  finalProfit={result.finalProfit}
-                  onConsult={(proType, proLabel) => setConsultModal({ proType, proLabel })}
-                />
-              )}
-            </div>
-          </>
-        )}
-
-        {/* History Link */}
-        {result && (
-          <div className="mt-4 text-center">
-            <Link href="/history" className="inline-flex items-center gap-1 text-base text-blue-600 font-semibold hover:underline">
-              {"\uD83D\uDCCA"} 월별 내역 보기 {"\u2192"}
-            </Link>
           </div>
         )}
 

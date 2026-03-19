@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { fmtComma } from '@/lib/format';
 
 interface Props {
@@ -8,47 +9,73 @@ interface Props {
   insuranceCost: number;
   totalTax: number;
   taxType: string;
+  empCount: number;
 }
 
-export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCost, totalTax, taxType }: Props) {
+export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCost, totalTax, taxType, empCount }: Props) {
+  const [open, setOpen] = useState(true);
+
   const rows = [
     {
-      label: `부가세 적립금`,
-      sub: taxType === 'general' ? '일반과세 (매출의 10%/6개월)' : '간이과세 (업종률 적용)',
+      label: '부가세 적립 (월)',
+      sub: taxType === 'general'
+        ? '일반과세: 매출 x 10% / 6개월'
+        : '간이과세: 매출 x 업종별 부가가치율 / 12개월',
       amount: vatProvision,
     },
     {
-      label: '종합소득세 (월할)',
-      sub: '연간 추정 후 12등분',
+      label: '종합소득세 (월 예상)',
+      sub: '연간 순이익에 구간세율 적용 후 12등분',
       amount: monthlyIncomeTax,
     },
     {
       label: '4대보험 사업주 부담',
-      sub: '직원급여의 약 10.9%',
+      sub: empCount > 0
+        ? `직원급여 x 10.9% (국민4.5% + 건강3.5% + 고용0.9% + 산재1.0%)`
+        : '직원 0명 - 해당 없음',
       amount: insuranceCost,
     },
   ];
 
   return (
-    <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
-      <h3 className="font-bold text-gray-800 mb-4">세금/보험 내역</h3>
-      <div className="divide-y divide-gray-100">
-        {rows.map((r) => (
-          <div key={r.label} className="flex justify-between items-center py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-700">{r.label}</p>
-              <p className="text-xs text-gray-400">{r.sub}</p>
-            </div>
-            <p className="text-sm font-semibold text-gray-800">
-              {fmtComma(r.amount)}원
-            </p>
+    <div className="rounded-2xl shadow-sm border border-[#e0d5c5] overflow-hidden" style={{ background: '#FFFDF7' }}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-5 py-4 flex items-center justify-between"
+        style={{ minHeight: '48px', lineHeight: '1.8' }}
+      >
+        <span className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>
+          {"\uD83D\uDCB0"} 세금/보험 내역
+        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-red-600" style={{ fontSize: '16px' }}>
+            월 {fmtComma(totalTax)}원
+          </span>
+          <span className="text-[#a09080]">{open ? '\u25B2' : '\u25BC'}</span>
+        </div>
+      </button>
+
+      {open && (
+        <div className="px-5 pb-5">
+          <div className="divide-y divide-[#e0d5c5]">
+            {rows.map((r) => (
+              <div key={r.label} className="flex justify-between items-start py-3" style={{ lineHeight: '1.8' }}>
+                <div className="flex-1 mr-3">
+                  <p className="font-semibold text-[#3a3025]" style={{ fontSize: '16px' }}>{r.label}</p>
+                  <p className="text-[#a09080]" style={{ fontSize: '14px' }}>{r.sub}</p>
+                </div>
+                <p className="font-bold text-[#3a3025] whitespace-nowrap" style={{ fontSize: '16px' }}>
+                  {fmtComma(r.amount)}원
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="mt-3 pt-3 border-t-2 border-gray-200 flex justify-between">
-        <span className="font-bold text-gray-800">월 합계</span>
-        <span className="font-bold text-red-600">{fmtComma(totalTax)}원</span>
-      </div>
+          <div className="mt-2 pt-3 border-t-2 border-[#c0b5a5] flex justify-between" style={{ lineHeight: '1.8' }}>
+            <span className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>월 세금 합계</span>
+            <span className="font-bold text-red-600" style={{ fontSize: '18px' }}>{fmtComma(totalTax)}원</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
