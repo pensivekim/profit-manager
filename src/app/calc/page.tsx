@@ -18,6 +18,10 @@ const BIZ_OPTIONS: { value: BizType; label: string }[] = [
   { value: 'retail', label: '소매/편의점' },
   { value: 'manufacture', label: '제조/공방' },
   { value: 'service', label: '서비스/학원/세탁' },
+  { value: 'delivery', label: '배달/퀵/대리운전' },
+  { value: 'freelance', label: '프리랜서/1인사업' },
+  { value: 'directsales', label: '방문판매/네트워크마케팅' },
+  { value: 'gig', label: '특수고용/플랫폼노동' },
 ];
 
 interface CalcResult {
