@@ -52,29 +52,29 @@ export default function ConsultModal({ proType, proLabel, recordSnapshot, onClos
     }
   };
 
-  const inputClass = "w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-[#3a3025] focus:border-[#2D5A8E] focus:ring-1 focus:ring-[#2D5A8E] outline-none";
+  const inputClass = "w-full rounded-lg border border-[#e0d5c5] px-4 py-3 outline-none";
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center" onClick={onClose}>
       <div
         className="w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 max-h-[85vh] overflow-y-auto"
-        style={{ background: '#FFFDF7' }}
+        style={{ background: 'var(--bg-card)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {done ? (
           <div className="text-center py-8">
             <p className="text-5xl mb-4">{"\u2705"}</p>
-            <h3 className="font-bold text-[#3a3025] mb-2" style={{ fontSize: '20px', lineHeight: '1.8' }}>접수 완료</h3>
-            <p className="text-[#5a4a3a] mb-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+            <h3 className="font-bold mb-2" style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>접수 완료</h3>
+            <p className="mb-1" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
               {proLabel} 상담 신청이 접수되었습니다.
             </p>
-            <p className="text-[#a09080] mb-6" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+            <p className="mb-6" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}>
               1영업일 내 연락드리겠습니다.
             </p>
             <button
               onClick={onClose}
-              className="w-full py-3.5 rounded-xl bg-[#2D5A8E] text-white font-bold"
-              style={{ fontSize: '16px', minHeight: '48px' }}
+              className="w-full py-3.5 rounded-xl text-white font-bold"
+              style={{ fontSize: 'var(--font-size-base)', minHeight: '48px', background: 'var(--accent)' }}
             >
               확인
             </button>
@@ -82,40 +82,40 @@ export default function ConsultModal({ proType, proLabel, recordSnapshot, onClos
         ) : (
           <>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-[#3a3025]" style={{ fontSize: '18px', lineHeight: '1.8' }}>
+              <h3 className="font-bold" style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
                 {proLabel} 상담 신청
               </h3>
-              <button onClick={onClose} className="text-[#a09080] text-2xl leading-none p-2" style={{ minWidth: '48px', minHeight: '48px' }}>&times;</button>
+              <button onClick={onClose} className="text-2xl leading-none p-2" style={{ minWidth: '48px', minHeight: '48px', color: 'var(--text-hint)' }}>&times;</button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>이름</label>
+                <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>이름</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="홍길동"
                   className={inputClass}
-                  style={{ fontSize: '16px', lineHeight: '1.8' }}
+                  style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>전화번호</label>
+                <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>전화번호</label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="01012345678"
                   className={inputClass}
-                  style={{ fontSize: '16px', lineHeight: '1.8' }}
+                  style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>
-                  희망 상담 내용 <span className="font-normal text-[#a09080]">(선택)</span>
+                <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
+                  희망 상담 내용 <span className="font-normal" style={{ color: 'var(--text-hint)' }}>(선택)</span>
                 </label>
                 <textarea
                   value={message}
@@ -123,7 +123,7 @@ export default function ConsultModal({ proType, proLabel, recordSnapshot, onClos
                   rows={3}
                   placeholder="상담받고 싶은 내용을 간단히 적어주세요"
                   className={`${inputClass} resize-none`}
-                  style={{ fontSize: '16px', lineHeight: '1.8' }}
+                  style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
                 />
               </div>
 
@@ -132,19 +132,20 @@ export default function ConsultModal({ proType, proLabel, recordSnapshot, onClos
                   type="checkbox"
                   checked={shareData}
                   onChange={(e) => setShareData(e.target.checked)}
-                  className="w-5 h-5 rounded border-[#c0b5a5] text-[#2D5A8E] focus:ring-[#2D5A8E]"
+                  className="w-5 h-5 rounded border-[#c0b5a5]"
+                  style={{ accentColor: 'var(--accent)' }}
                 />
                 <div>
-                  <span className="font-semibold text-[#5a4a3a]" style={{ fontSize: '16px' }}>내 경영 데이터 함께 전달</span>
-                  <p className="text-[#a09080]" style={{ fontSize: '14px' }}>매출, 지출, 세금 계산 결과가 전문가에게 전달됩니다</p>
+                  <span className="font-semibold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>내 경영 데이터 함께 전달</span>
+                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>매출, 지출, 세금 계산 결과가 전문가에게 전달됩니다</p>
                 </div>
               </label>
 
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full py-4 rounded-xl bg-[#2D5A8E] text-white font-bold hover:bg-[#24496f] transition-colors disabled:opacity-50"
-                style={{ fontSize: '18px', minHeight: '48px', lineHeight: '1.8' }}
+                className="w-full py-4 rounded-xl text-white font-bold transition-colors disabled:opacity-50"
+                style={{ fontSize: 'var(--font-size-lg)', minHeight: '48px', lineHeight: 'var(--line-height)', background: 'var(--accent)' }}
               >
                 {loading ? '접수 중...' : '상담 신청하기'}
               </button>

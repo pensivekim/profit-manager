@@ -11,54 +11,49 @@ export default function LandingPage() {
   const tip = useMemo(() => getTodayTip(), []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-white to-blue-50">
+    <div className="min-h-screen" style={{ background: 'var(--bg-page)' }}>
       <div className="max-w-lg mx-auto px-4 py-6">
 
-        {/* Top */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="text-xs text-gray-400">{dateStr}</p>
-            <h1 className="text-lg font-bold text-gray-800 mt-0.5">{greeting}</h1>
+            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-hint)' }}>{dateStr}</p>
+            <h1 className="font-bold mt-0.5" style={{ fontSize: 'var(--font-size-lg)', color: 'var(--text-primary)' }}>{greeting}</h1>
           </div>
-          <div className="w-11 h-11 rounded-full bg-amber-100 flex items-center justify-center text-xl">
+          <div className="w-11 h-11 rounded-full flex items-center justify-center text-xl" style={{ background: 'var(--accent-light)' }}>
             {"\uD83D\uDCB0"}
           </div>
         </div>
 
-        {/* Quote */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-amber-100 mb-4">
-          <p className="text-xs text-amber-600 font-semibold mb-2">{"\u2728"} 오늘의 한마디</p>
-          <p className="text-gray-800 font-medium leading-relaxed">
+        <div className="rounded-2xl p-5 shadow-sm mb-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <p className="font-semibold mb-2" style={{ fontSize: 'var(--font-size-xs)', color: 'var(--warning)' }}>{"\u2728"} 오늘의 한마디</p>
+          <p className="font-medium" style={{ color: 'var(--text-primary)', lineHeight: 'var(--line-height)' }}>
             &ldquo;{quote.text}&rdquo;
           </p>
-          <p className="text-xs text-gray-400 mt-2 text-right">- {quote.author}</p>
+          <p className="mt-2 text-right" style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-hint)' }}>- {quote.author}</p>
         </div>
 
-        {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Link href="/calc" className="bg-blue-600 text-white rounded-2xl p-4 shadow-sm hover:bg-blue-700 transition-colors">
+          <Link href="/calc" className="rounded-2xl p-4 shadow-sm text-white hover:opacity-90 transition-opacity" style={{ background: 'var(--accent)' }}>
             <span className="text-2xl block mb-1">{"\uD83E\uDDEE"}</span>
-            <span className="font-bold text-sm">실수령액 계산</span>
-            <span className="block text-blue-200 text-xs mt-0.5">진짜 남는 돈 확인</span>
+            <span className="font-bold" style={{ fontSize: 'var(--font-size-sm)' }}>실수령액 계산</span>
+            <span className="block opacity-70 mt-0.5" style={{ fontSize: 'var(--font-size-xs)' }}>진짜 남는 돈 확인</span>
           </Link>
-          <Link href="/history" className="bg-emerald-600 text-white rounded-2xl p-4 shadow-sm hover:bg-emerald-700 transition-colors">
+          <Link href="/history" className="rounded-2xl p-4 shadow-sm text-white hover:opacity-90 transition-opacity" style={{ background: 'var(--success)' }}>
             <span className="text-2xl block mb-1">{"\uD83D\uDCCA"}</span>
-            <span className="font-bold text-sm">월별 추이</span>
-            <span className="block text-emerald-200 text-xs mt-0.5">나아지고 있을까?</span>
+            <span className="font-bold" style={{ fontSize: 'var(--font-size-sm)' }}>주별 추이</span>
+            <span className="block opacity-70 mt-0.5" style={{ fontSize: 'var(--font-size-xs)' }}>나아지고 있을까?</span>
           </Link>
         </div>
 
-        {/* Tip */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-blue-100 mb-4">
-          <p className="text-xs text-blue-600 font-semibold mb-1">{"\uD83D\uDCA1"} 오늘의 경영 팁</p>
-          <p className="font-bold text-gray-800 text-sm mb-1">{tip.title}</p>
-          <p className="text-xs text-gray-600 leading-relaxed">{tip.body}</p>
+        <div className="rounded-2xl p-4 shadow-sm mb-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <p className="font-semibold mb-1" style={{ fontSize: 'var(--font-size-xs)', color: 'var(--accent)' }}>{"\uD83D\uDCA1"} 오늘의 경영 팁</p>
+          <p className="font-bold mb-1" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-primary)' }}>{tip.title}</p>
+          <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', lineHeight: 'var(--line-height)' }}>{tip.body}</p>
         </div>
 
-        {/* Who is this for */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
-          <h2 className="font-bold text-gray-800 mb-1 text-sm">이런 분들을 위해 만들었어요</h2>
-          <p className="text-xs text-gray-400 mb-3">매달 얼마 남는지 막막한 모든 분</p>
+        <div className="rounded-2xl p-5 shadow-sm mb-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <h2 className="font-bold mb-1" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-primary)' }}>이런 분들을 위해 만들었어요</h2>
+          <p className="mb-3" style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-hint)' }}>매달 얼마 남는지 막막한 모든 분</p>
           <div className="grid grid-cols-3 gap-2">
             {[
               { icon: '\uD83C\uDF5C', label: '식당/카페\n사장님' },
@@ -68,17 +63,16 @@ export default function LandingPage() {
               { icon: '\uD83D\uDCBB', label: '프리랜서\n1인사업' },
               { icon: '\uD83D\uDE95', label: '대리운전\n플랫폼노동' },
             ].map((p) => (
-              <div key={p.label} className="bg-gray-50 rounded-xl p-2.5 text-center">
+              <div key={p.label} className="rounded-xl p-2.5 text-center" style={{ background: 'var(--bg-page)' }}>
                 <span className="text-xl block">{p.icon}</span>
-                <span className="text-xs text-gray-600 mt-1 block whitespace-pre-line leading-tight">{p.label}</span>
+                <span className="mt-1 block whitespace-pre-line leading-tight" style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>{p.label}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Features */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
-          <h2 className="font-bold text-gray-800 mb-3 text-sm">무료로 이런 걸 해드려요</h2>
+        <div className="rounded-2xl p-5 shadow-sm mb-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <h2 className="font-bold mb-3" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-primary)' }}>무료로 이런 걸 해드려요</h2>
           <div className="space-y-2.5">
             {[
               { icon: '\uD83E\uDDEE', title: '실수령액 계산', desc: '세금, 보험, 수수료 다 빼고 진짜 남는 돈' },
@@ -89,28 +83,25 @@ export default function LandingPage() {
               <div key={f.title} className="flex items-start gap-2.5">
                 <span className="text-lg">{f.icon}</span>
                 <div>
-                  <p className="font-semibold text-gray-800 text-xs">{f.title}</p>
-                  <p className="text-xs text-gray-500">{f.desc}</p>
+                  <p className="font-semibold" style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-primary)' }}>{f.title}</p>
+                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-hint)' }}>{f.desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* CTA */}
-        <Link
-          href="/calc"
-          className="block w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-center hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg shadow-blue-200 mb-6"
-        >
+        <Link href="/calc"
+          className="block w-full py-3.5 rounded-xl text-white font-bold text-center hover:opacity-90 transition-opacity shadow-lg mb-6"
+          style={{ background: 'var(--accent)', fontSize: 'var(--font-size-base)' }}>
           내 손에 남는 돈 계산하기 {"\u2192"}
         </Link>
 
-        {/* Footer */}
         <div className="text-center pb-6">
-          <p className="text-xs text-gray-400">
+          <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-hint)' }}>
             혼자 고민하지 마세요. 숫자를 알면 길이 보입니다.
           </p>
-          <p className="text-xs font-semibold text-gray-500 mt-1">
+          <p className="font-semibold mt-1" style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>
             pro.genomic.cc
           </p>
         </div>

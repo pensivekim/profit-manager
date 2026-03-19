@@ -127,9 +127,9 @@ export default function CalcPage() {
     const over = actualPct > avgPct && avgPct > 0;
     return (
       <div>
-        <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>
+        <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
           {label}
-          <span className={`ml-1 text-sm font-normal ${over ? 'text-red-600' : 'text-[#a09080]'}`}>
+          <span className={`ml-1 text-sm font-normal ${over ? 'text-red-600' : ''}`} style={{ color: over ? undefined : 'var(--text-hint)' }}>
             (평균 {avgPct}%)
           </span>
         </label>
@@ -139,17 +139,17 @@ export default function CalcPage() {
             value={value}
             onChange={(e) => onChange(Number(e.target.value))}
             step={100000}
-            className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-right text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
-            style={{ fontSize: '16px', lineHeight: '1.8' }}
+            className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-right text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a09080] text-sm pointer-events-none">원</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>원</span>
         </div>
         <div className="flex justify-between mt-1">
-          <span className={`text-sm ${over ? 'text-red-600 font-semibold' : 'text-[#a09080]'}`}>
+          <span className={`text-sm ${over ? 'text-red-600 font-semibold' : ''}`} style={{ color: over ? undefined : 'var(--text-hint)' }}>
             {actualPct}%
             {over && ' (초과!)'}
           </span>
-          <span className="text-sm text-[#a09080]">{fmtComma(value)}원</span>
+          <span className="text-sm" style={{ color: 'var(--text-hint)' }}>{fmtComma(value)}원</span>
         </div>
       </div>
     );
@@ -163,17 +163,17 @@ export default function CalcPage() {
     step: number,
   ) => (
     <div>
-      <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>{label}</label>
+      <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{label}</label>
       <div className="relative">
         <input
           type="number"
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           step={step}
-          className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-right text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
-          style={{ fontSize: '16px', lineHeight: '1.8' }}
+          className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-right text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+          style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
         />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a09080] text-sm pointer-events-none">{suffix}</span>
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>{suffix}</span>
       </div>
     </div>
   );
@@ -187,27 +187,27 @@ export default function CalcPage() {
   } : null;
 
   return (
-    <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ background: 'var(--bg-page)' }}>
       <div className="max-w-lg mx-auto px-4 py-6 pb-24 sm:pb-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <Link href="/" className="text-base text-blue-600 font-semibold" style={{ lineHeight: '1.8' }}>{"\u2190"} 홈</Link>
+          <Link href="/" className="text-base text-blue-600 font-semibold" style={{ lineHeight: 'var(--line-height)' }}>{"\u2190"} 홈</Link>
           <div className="text-center flex-1">
-            <h1 className="text-xl font-bold text-[#3a3025]" style={{ lineHeight: '1.8' }}>내 손에 얼마 남았나?</h1>
+            <h1 className="text-xl font-bold" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>내 손에 얼마 남았나?</h1>
           </div>
           <div className="w-10" />
         </div>
 
         {/* Input Form */}
-        <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5] space-y-5" style={{ background: '#FFFDF7' }}>
+        <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5] space-y-5" style={{ background: 'var(--bg-card)' }}>
           {/* 업종 */}
           <div>
-            <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>업종</label>
+            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>업종</label>
             <select
               value={bizType}
               onChange={(e) => handleBizChange(e.target.value as BizType)}
-              className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
-              style={{ fontSize: '16px', lineHeight: '1.8' }}
+              className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
             >
               {BIZ_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -217,7 +217,7 @@ export default function CalcPage() {
 
           {/* 과세유형 */}
           <div>
-            <label className="block text-base font-semibold text-[#5a4a3a] mb-2" style={{ lineHeight: '1.8' }}>과세유형</label>
+            <label className="block text-base font-semibold mb-2" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>과세유형</label>
             <div className="grid grid-cols-2 gap-2">
               {(['general', 'simplified'] as const).map((t) => (
                 <button
@@ -226,9 +226,9 @@ export default function CalcPage() {
                   className={`py-3 rounded-lg text-base font-semibold transition-all ${
                     taxType === t
                       ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-[#F5F0E8] text-[#5a4a3a] hover:bg-[#ebe5da]'
+                      : ''
                   }`}
-                  style={{ lineHeight: '1.8' }}
+                  style={taxType === t ? { lineHeight: 'var(--line-height)' } : { lineHeight: 'var(--line-height)', background: 'var(--bg-page)', color: 'var(--text-secondary)' }}
                 >
                   {t === 'general' ? '일반과세자' : '간이과세자'}
                 </button>
@@ -238,24 +238,24 @@ export default function CalcPage() {
 
           {/* 매출 */}
           <div>
-            <label className="block text-base font-semibold text-[#5a4a3a] mb-1" style={{ lineHeight: '1.8' }}>월 매출</label>
+            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>월 매출</label>
             <div className="relative">
               <input
                 type="number"
                 value={revenue}
                 onChange={(e) => handleRevenueChange(Number(e.target.value))}
                 step={100000}
-                className="w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 py-3 text-right text-[#3a3025] text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
-                style={{ fontSize: '16px', lineHeight: '1.8' }}
+                className="w-full rounded-lg border border-[#e0d5c5] px-4 py-3 text-right text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a09080] text-sm pointer-events-none">원</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>원</span>
             </div>
-            <p className="text-sm text-[#a09080] mt-1 text-right">{fmtComma(revenue)}원</p>
+            <p className="text-sm mt-1 text-right" style={{ color: 'var(--text-hint)' }}>{fmtComma(revenue)}원</p>
           </div>
 
           {/* 원가 4항목 */}
           <div className="pt-3 border-t border-[#e0d5c5]">
-            <p className="text-base font-bold text-[#3a3025] mb-3" style={{ lineHeight: '1.8' }}>월 지출 (원가)</p>
+            <p className="text-base font-bold mb-3" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>월 지출 (원가)</p>
             <div className="grid grid-cols-2 gap-3">
               {costInput('임대료', costRent, setCostRent, bm.rent)}
               {costInput('인건비', costLabor, setCostLabor, bm.labor)}
@@ -278,7 +278,7 @@ export default function CalcPage() {
             onClick={handleCalc}
             disabled={loading}
             className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ fontSize: '18px', lineHeight: '1.8' }}
+            style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)' }}
           >
             {loading ? '계산 중...' : '계산하기'}
           </button>
@@ -325,7 +325,7 @@ export default function CalcPage() {
               <button
                 onClick={() => setShowAI(true)}
                 className="py-4 rounded-xl font-bold text-white text-base transition-colors"
-                style={{ background: '#2D5A8E', minHeight: '48px', lineHeight: '1.8' }}
+                style={{ background: 'var(--accent)', minHeight: '48px', lineHeight: 'var(--line-height)' }}
               >
                 {"\uD83E\uDD16"} AI 경영 조언
               </button>
@@ -334,8 +334,8 @@ export default function CalcPage() {
                   const el = document.getElementById('pro-section');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="py-4 rounded-xl font-bold text-[#2D5A8E] text-base border-2 border-[#2D5A8E] transition-colors hover:bg-[#2D5A8E]/10"
-                style={{ minHeight: '48px', lineHeight: '1.8' }}
+                className="py-4 rounded-xl font-bold text-base border-2 transition-colors"
+                style={{ minHeight: '48px', lineHeight: 'var(--line-height)', color: 'var(--accent)', borderColor: 'var(--accent)' }}
               >
                 {"\uD83D\uDC64"} 전문가 연결
               </button>
@@ -372,7 +372,7 @@ export default function CalcPage() {
 
             {/* 월별 내역 */}
             <div className="text-center">
-              <Link href="/history" className="inline-flex items-center gap-1 text-base text-[#2D5A8E] font-semibold hover:underline" style={{ minHeight: '48px', lineHeight: '1.8' }}>
+              <Link href="/history" className="inline-flex items-center gap-1 text-base font-semibold hover:underline" style={{ minHeight: '48px', lineHeight: 'var(--line-height)', color: 'var(--accent)' }}>
                 {"\uD83D\uDCCA"} 월별 내역 보기 {"\u2192"}
               </Link>
             </div>
@@ -380,7 +380,7 @@ export default function CalcPage() {
         )}
 
         {/* Footer */}
-        <p className="text-center text-sm text-[#a09080] mt-8 pb-4" style={{ lineHeight: '1.8' }}>
+        <p className="text-center text-sm mt-8 pb-4" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}>
           본 계산기는 참고용이며, 정확한 세무 상담은 전문가에게 문의하세요.
         </p>
       </div>

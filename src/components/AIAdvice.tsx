@@ -68,16 +68,16 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
 
   if (loading) {
     return (
-      <div className="rounded-2xl p-8 shadow-sm border border-[#e0d5c5] text-center" style={{ background: '#FFFDF7' }}>
+      <div className="rounded-2xl p-8 shadow-sm border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)' }}>
         <div className="flex justify-center gap-2 mb-4">
-          <span className="w-3.5 h-3.5 bg-[#2D5A8E] rounded-full animate-pulse" />
-          <span className="w-3.5 h-3.5 bg-[#2D5A8E] rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-          <span className="w-3.5 h-3.5 bg-[#2D5A8E] rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+          <span className="w-3.5 h-3.5 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
+          <span className="w-3.5 h-3.5 rounded-full animate-pulse" style={{ background: 'var(--accent)', animationDelay: '0.2s' }} />
+          <span className="w-3.5 h-3.5 rounded-full animate-pulse" style={{ background: 'var(--accent)', animationDelay: '0.4s' }} />
         </div>
-        <p className="text-[#5a4a3a]" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+        <p style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
           사장님 데이터 분석 중...
         </p>
-        <p className="text-[#a09080]" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+        <p style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}>
           잠시만 기다려주세요
         </p>
       </div>
@@ -86,12 +86,12 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
 
   if (error) {
     return (
-      <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
-        <p className="text-red-500 text-center mb-4" style={{ fontSize: '16px', lineHeight: '1.8' }}>{error}</p>
+      <div className="rounded-2xl p-6 shadow-sm border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+        <p className="text-red-500 text-center mb-4" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)' }}>{error}</p>
         <button
           onClick={fetchAdvice}
-          className="w-full py-3.5 rounded-xl bg-[#2D5A8E] text-white font-bold hover:bg-[#24496f] transition-colors"
-          style={{ fontSize: '16px', minHeight: '48px' }}
+          className="w-full py-3.5 rounded-xl text-white font-bold transition-colors"
+          style={{ fontSize: 'var(--font-size-base)', minHeight: '48px', background: 'var(--accent)' }}
         >
           다시 시도
         </button>
@@ -105,7 +105,7 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
 
   return (
     <div className="space-y-3">
-      <h3 className="font-bold text-[#3a3025] px-1" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+      <h3 className="font-bold px-1" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
         {"\uD83E\uDD16"} AI 경영 조언
       </h3>
 
@@ -115,25 +115,25 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
           <div
             key={i}
             className={`rounded-xl border-l-4 ${style.border}`}
-            style={{ padding: '16px 20px', lineHeight: '1.8' }}
+            style={{ padding: '16px 20px', lineHeight: 'var(--line-height)' }}
           >
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">{style.icon}</span>
               <span className={`text-xs text-white px-2.5 py-0.5 rounded-full font-bold ${style.labelBg}`}>
                 {style.label}
               </span>
-              <span className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>
+              <span className="font-bold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>
                 {a.title}
               </span>
             </div>
-            <p className="text-[#5a4a3a]" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+            <p style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
               {a.body}
             </p>
             {a.proLink && a.proLink !== 'none' && onProLink && (
               <button
                 onClick={() => onProLink(a.proLink)}
-                className="mt-3 py-2.5 px-4 rounded-lg bg-[#2D5A8E] text-white font-bold text-sm hover:bg-[#24496f] transition-colors"
-                style={{ minHeight: '44px' }}
+                className="mt-3 py-2.5 px-4 rounded-lg text-white font-bold text-sm transition-colors"
+                style={{ minHeight: '44px', background: 'var(--accent)' }}
               >
                 {PRO_LABELS[a.proLink]} {"\u2192"}
               </button>
@@ -144,8 +144,8 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
 
       <button
         onClick={fetchAdvice}
-        className="w-full py-3 rounded-xl border-2 border-dashed border-[#c0b5a5] text-[#a09080] font-semibold hover:border-[#2D5A8E] hover:text-[#2D5A8E] transition-colors"
-        style={{ fontSize: '16px', minHeight: '48px', lineHeight: '1.8' }}
+        className="w-full py-3 rounded-xl border-2 border-dashed border-[#c0b5a5] font-semibold transition-colors"
+        style={{ fontSize: 'var(--font-size-base)', minHeight: '48px', lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}
       >
         조언 다시 받기
       </button>

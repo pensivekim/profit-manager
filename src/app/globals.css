@@ -1,29 +1,73 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F5F0E8;
-  --foreground: #3a3025;
+  /* 눈편한 배경 */
+  --bg-page:       #F5F0E8;
+  --bg-card:       #FFFDF7;
+  --bg-card-hover: #FFF9EC;
+
+  /* 텍스트 */
+  --text-primary:  #2C2C2A;
+  --text-secondary:#5F5E5A;
+  --text-hint:     #9A9690;
+
+  /* 강조 */
+  --accent:        #2D5A8E;
+  --accent-light:  #E8F0FA;
+  --danger:        #B03A2E;
+  --warning:       #9A6B00;
+  --success:       #2E7D4F;
+
+  /* 테두리 */
+  --border:        #DDD8CF;
+
+  /* 타이포그래피 */
+  --font-size-base: 17px;
+  --font-size-sm:   15px;
+  --font-size-xs:   13px;
+  --font-size-lg:   20px;
+  --font-size-xl:   26px;
+  --font-size-2xl:  34px;
+  --line-height:    1.9;
+  --letter-spacing: 0.01em;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-page);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+  -webkit-font-smoothing: antialiased;
 }
 
-input[type="number"] {
-  font-size: 16px;
+input, select, textarea {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  min-height: 48px;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45,90,142,0.12);
 }
 
-select {
-  font-size: 16px;
+/* 스크롤바 */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #C8C4B8; border-radius: 3px; }
 }

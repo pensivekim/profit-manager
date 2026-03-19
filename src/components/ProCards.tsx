@@ -68,8 +68,8 @@ export default function ProCards({ monthlyIncomeTax, vatProvision, empCount, ins
   ];
 
   return (
-    <div className="rounded-2xl p-5 shadow-sm border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
-      <h3 className="font-bold text-[#3a3025] mb-4" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+    <div className="rounded-2xl p-5 shadow-sm border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
+      <h3 className="font-bold mb-4" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
         {"\uD83D\uDC64"} 전문가 상담 연결
       </h3>
       <div className="space-y-3">
@@ -79,23 +79,23 @@ export default function ProCards({ monthlyIncomeTax, vatProvision, empCount, ins
             className={`rounded-xl p-4 border-2 transition-all ${
               c.urgent ? 'border-red-300 bg-red-50' : 'border-[#e0d5c5]'
             }`}
-            style={{ background: c.urgent ? undefined : '#FFFDF7' }}
+            style={{ background: c.urgent ? undefined : 'var(--bg-card)' }}
           >
             <div className="flex items-start gap-3">
               <span className="text-2xl mt-0.5">{c.icon}</span>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>{c.title}</span>
+                  <span className="font-bold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>{c.title}</span>
                   {c.urgent && (
                     <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-bold">
                       긴급 권장
                     </span>
                   )}
                 </div>
-                <p className="text-[#5a4a3a]" style={{ fontSize: '14px', lineHeight: '1.8' }}>{c.desc}</p>
+                <p style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{c.desc}</p>
                 <p
-                  className={`mt-1 ${c.urgent ? 'text-red-600 font-semibold' : 'text-[#a09080]'}`}
-                  style={{ fontSize: '14px', lineHeight: '1.8' }}
+                  className={`mt-1 ${c.urgent ? 'text-red-600 font-semibold' : ''}`}
+                  style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: c.urgent ? undefined : 'var(--text-hint)' }}
                 >
                   {c.reason}
                 </p>
@@ -105,9 +105,9 @@ export default function ProCards({ monthlyIncomeTax, vatProvision, empCount, ins
                     className={`mt-3 w-full py-3 rounded-lg font-bold transition-colors ${
                       c.urgent
                         ? 'bg-red-500 text-white hover:bg-red-600'
-                        : 'bg-[#2D5A8E] text-white hover:bg-[#24496f]'
+                        : 'text-white hover:opacity-90'
                     }`}
-                    style={{ fontSize: '16px', minHeight: '48px', lineHeight: '1.8' }}
+                    style={{ fontSize: 'var(--font-size-base)', minHeight: '48px', lineHeight: 'var(--line-height)', background: c.urgent ? undefined : 'var(--accent)' }}
                   >
                     {c.title} 상담 신청하기
                   </button>

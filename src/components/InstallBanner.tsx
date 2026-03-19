@@ -54,32 +54,32 @@ export default function InstallBanner() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4">
-      <div className="max-w-lg mx-auto rounded-2xl p-4 shadow-lg border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
+      <div className="max-w-lg mx-auto rounded-2xl p-4 shadow-lg border border-[#e0d5c5]" style={{ background: 'var(--bg-card)' }}>
         <div className="flex items-start gap-3">
           <span className="text-2xl mt-0.5">{"\uD83D\uDCF1"}</span>
           <div className="flex-1">
-            <p className="font-bold text-[#3a3025]" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+            <p className="font-bold" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
               홈화면에 추가하세요
             </p>
-            <p className="text-[#5a4a3a]" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
               앱처럼 바로 열고, 매주 알림도 받을 수 있어요
             </p>
 
             {state.isIOS ? (
-              <p className="text-[#2D5A8E] font-semibold mt-2" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+              <p className="font-semibold mt-2" style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--accent)' }}>
                 Safari {"\u2192"} 공유 버튼 {"\u2192"} 홈 화면에 추가
               </p>
             ) : (
               <button
                 onClick={handleInstall}
-                className="mt-2 py-2.5 px-5 rounded-lg bg-[#2D5A8E] text-white font-bold"
-                style={{ fontSize: '16px', minHeight: '44px' }}
+                className="mt-2 py-2.5 px-5 rounded-lg text-white font-bold"
+                style={{ fontSize: 'var(--font-size-base)', minHeight: '44px', background: 'var(--accent)' }}
               >
                 홈화면에 추가
               </button>
             )}
           </div>
-          <button onClick={handleDismiss} className="text-[#a09080] text-lg p-1" style={{ minWidth: '32px', minHeight: '32px' }}>
+          <button onClick={handleDismiss} className="text-lg p-1" style={{ minWidth: '32px', minHeight: '32px', color: 'var(--text-hint)' }}>
             &times;
           </button>
         </div>

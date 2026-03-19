@@ -38,20 +38,20 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
   ];
 
   return (
-    <div className="rounded-2xl shadow-sm border border-[#e0d5c5] overflow-hidden" style={{ background: '#FFFDF7' }}>
+    <div className="rounded-2xl shadow-sm border border-[#e0d5c5] overflow-hidden" style={{ background: 'var(--bg-card)' }}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full px-5 py-4 flex items-center justify-between"
-        style={{ minHeight: '48px', lineHeight: '1.8' }}
+        style={{ minHeight: '48px', lineHeight: 'var(--line-height)' }}
       >
-        <span className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>
+        <span className="font-bold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>
           {"\uD83D\uDCB0"} 세금/보험 내역
         </span>
         <div className="flex items-center gap-2">
-          <span className="font-bold text-red-600" style={{ fontSize: '16px' }}>
+          <span className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-base)' }}>
             월 {fmtComma(totalTax)}원
           </span>
-          <span className="text-[#a09080]">{open ? '\u25B2' : '\u25BC'}</span>
+          <span style={{ color: 'var(--text-hint)' }}>{open ? '\u25B2' : '\u25BC'}</span>
         </div>
       </button>
 
@@ -59,20 +59,20 @@ export default function TaxDetail({ vatProvision, monthlyIncomeTax, insuranceCos
         <div className="px-5 pb-5">
           <div className="divide-y divide-[#e0d5c5]">
             {rows.map((r) => (
-              <div key={r.label} className="flex justify-between items-start py-3" style={{ lineHeight: '1.8' }}>
+              <div key={r.label} className="flex justify-between items-start py-3" style={{ lineHeight: 'var(--line-height)' }}>
                 <div className="flex-1 mr-3">
-                  <p className="font-semibold text-[#3a3025]" style={{ fontSize: '16px' }}>{r.label}</p>
-                  <p className="text-[#a09080]" style={{ fontSize: '14px' }}>{r.sub}</p>
+                  <p className="font-semibold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>{r.label}</p>
+                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>{r.sub}</p>
                 </div>
-                <p className="font-bold text-[#3a3025] whitespace-nowrap" style={{ fontSize: '16px' }}>
+                <p className="font-bold whitespace-nowrap" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>
                   {fmtComma(r.amount)}원
                 </p>
               </div>
             ))}
           </div>
-          <div className="mt-2 pt-3 border-t-2 border-[#c0b5a5] flex justify-between" style={{ lineHeight: '1.8' }}>
-            <span className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>월 세금 합계</span>
-            <span className="font-bold text-red-600" style={{ fontSize: '18px' }}>{fmtComma(totalTax)}원</span>
+          <div className="mt-2 pt-3 border-t-2 border-[#c0b5a5] flex justify-between" style={{ lineHeight: 'var(--line-height)' }}>
+            <span className="font-bold" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-primary)' }}>월 세금 합계</span>
+            <span className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-lg)' }}>{fmtComma(totalTax)}원</span>
           </div>
         </div>
       )}

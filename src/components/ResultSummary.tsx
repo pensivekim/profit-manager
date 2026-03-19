@@ -23,22 +23,22 @@ export default function ResultSummary({ finalProfit, hourlyWage, totalHours, rev
       {/* 실수령액 강조 */}
       <div
         className={`rounded-2xl p-6 text-white ${isLoss ? 'bg-red-500' : 'bg-[#2D5A8E]'}`}
-        style={{ lineHeight: '1.8' }}
+        style={{ lineHeight: 'var(--line-height)' }}
       >
         <p className="text-base opacity-80 mb-1">
           {isLoss ? '이번 달 적자입니다' : '이번 달 내 손에 남는 돈'}
         </p>
-        <p style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: '1.3' }}>
+        <p style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold', lineHeight: '1.3' }}>
           {fmtComma(finalProfit)}원
         </p>
 
         {/* 시급 */}
         <div
           className={`mt-4 rounded-xl p-4 ${belowMinWage ? 'bg-amber-500/90' : 'bg-white/15'}`}
-          style={{ lineHeight: '1.8' }}
+          style={{ lineHeight: 'var(--line-height)' }}
         >
           <p className="text-base opacity-90 mb-0.5">시간당 수익</p>
-          <p style={{ fontSize: '28px', fontWeight: 'bold', lineHeight: '1.3' }}>
+          <p style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'bold', lineHeight: '1.3' }}>
             {fmtComma(hourlyWage)}원
           </p>
           <p className="text-base opacity-80 mt-1">
@@ -58,17 +58,17 @@ export default function ResultSummary({ finalProfit, hourlyWage, totalHours, rev
 
       {/* 요약 카드 3개 */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
-          <p className="text-sm text-[#a09080]">매출</p>
-          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#2D5A8E' }}>{fmtComma(revenue)}원</p>
+        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+          <p className="text-sm" style={{ color: 'var(--text-hint)' }}>매출</p>
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--accent)' }}>{fmtComma(revenue)}원</p>
         </div>
-        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
-          <p className="text-sm text-[#a09080]">운영비</p>
-          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#5a4a3a' }}>{fmtComma(opCost)}원</p>
+        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+          <p className="text-sm" style={{ color: 'var(--text-hint)' }}>운영비</p>
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--text-secondary)' }}>{fmtComma(opCost)}원</p>
         </div>
-        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
-          <p className="text-sm text-[#a09080]">세금합계</p>
-          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#dc2626' }}>{fmtComma(totalTax)}원</p>
+        <div className="rounded-xl p-3 border border-[#e0d5c5] text-center" style={{ background: 'var(--bg-card)', lineHeight: 'var(--line-height)' }}>
+          <p className="text-sm" style={{ color: 'var(--text-hint)' }}>세금합계</p>
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: '#dc2626' }}>{fmtComma(totalTax)}원</p>
         </div>
       </div>
     </div>

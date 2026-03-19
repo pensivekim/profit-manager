@@ -72,21 +72,21 @@ export default function SettingsPage() {
     }
   }, [name, phone, bizType, taxType, empCount, workDays, workHours, existingUserId]);
 
-  const inputClass = "w-full rounded-lg border border-[#e0d5c5] bg-[#FFFDF7] px-4 text-[#3a3025] focus:border-[#2D5A8E] focus:ring-1 focus:ring-[#2D5A8E] outline-none";
+  const inputClass = "w-full rounded-lg border border-[#e0d5c5] px-4 outline-none";
 
   if (saved) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F5F0E8' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
         <div className="max-w-lg mx-auto px-4 text-center">
           <p className="text-5xl mb-4">{"\u2705"}</p>
-          <h2 className="font-bold text-[#3a3025] mb-2" style={{ fontSize: '20px', lineHeight: '1.8' }}>
+          <h2 className="font-bold mb-2" style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
             설정 완료!
           </h2>
-          <p className="text-[#5a4a3a] mb-6" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+          <p className="mb-6" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
             이제 매주 매출만 입력하시면 돼요.
           </p>
-          <Link href="/weekly" className="block w-full py-4 rounded-xl bg-[#2D5A8E] text-white font-bold"
-            style={{ fontSize: '18px', minHeight: '52px', lineHeight: '2.2' }}>
+          <Link href="/weekly" className="block w-full py-4 rounded-xl text-white font-bold"
+            style={{ fontSize: 'var(--font-size-lg)', minHeight: '52px', lineHeight: '2.2', background: 'var(--accent)' }}>
             이번 주 매출 입력하기
           </Link>
         </div>
@@ -95,46 +95,46 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
+    <div className="min-h-screen" style={{ background: 'var(--bg-page)' }}>
       <div className="max-w-lg mx-auto px-4 py-6">
         <div className="text-center mb-6">
-          <h1 className="font-bold text-[#3a3025]" style={{ fontSize: '20px', lineHeight: '1.8' }}>
+          <h1 className="font-bold" style={{ fontSize: 'var(--font-size-lg)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
             기본 설정
           </h1>
-          <p className="text-[#a09080]" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+          <p style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}>
             한 번만 입력하면 매주 자동 적용돼요
           </p>
         </div>
 
-        <div className="rounded-2xl p-5 border border-[#e0d5c5] space-y-4" style={{ background: '#FFFDF7' }}>
+        <div className="rounded-2xl p-5 border border-[#e0d5c5] space-y-4" style={{ background: 'var(--bg-card)' }}>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>이름</label>
+              <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>이름</label>
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="홍길동"
-                className={inputClass} style={{ fontSize: '16px', height: '48px' }} />
+                className={inputClass} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }} />
             </div>
             <div>
-              <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>전화번호</label>
+              <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>전화번호</label>
               <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="01012345678"
-                className={inputClass} style={{ fontSize: '16px', height: '48px' }} />
+                className={inputClass} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }} />
             </div>
           </div>
 
           <div>
-            <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '16px' }}>업종</label>
+            <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>업종</label>
             <select value={bizType} onChange={(e) => setBizType(e.target.value as BizType)}
-              className={inputClass} style={{ fontSize: '16px', height: '48px' }}>
+              className={inputClass} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }}>
               {BIZ_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
 
           <div>
-            <label className="block font-semibold text-[#5a4a3a] mb-2" style={{ fontSize: '16px' }}>과세유형</label>
+            <label className="block font-semibold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>과세유형</label>
             <div className="grid grid-cols-2 gap-2">
               {(['general', 'simplified'] as const).map((t) => (
                 <button key={t} onClick={() => setTaxType(t)}
-                  className={`rounded-lg font-semibold transition-all ${taxType === t ? 'bg-[#2D5A8E] text-white' : 'bg-[#F5F0E8] text-[#5a4a3a]'}`}
-                  style={{ fontSize: '16px', height: '48px' }}>
+                  className={`rounded-lg font-semibold transition-all ${taxType === t ? 'text-white' : ''}`}
+                  style={{ fontSize: 'var(--font-size-base)', height: '48px', background: taxType === t ? 'var(--accent)' : 'var(--bg-page)', color: taxType === t ? undefined : 'var(--text-secondary)' }}>
                   {t === 'general' ? '일반과세자' : '간이과세자'}
                 </button>
               ))}
@@ -143,30 +143,30 @@ export default function SettingsPage() {
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '14px' }}>직원 수</label>
+              <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>직원 수</label>
               <input type="number" value={empCount} onChange={(e) => setEmpCount(Number(e.target.value))}
-                className={`${inputClass} text-right`} style={{ fontSize: '16px', height: '48px' }} />
+                className={`${inputClass} text-right`} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }} />
             </div>
             <div>
-              <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '14px' }}>월 근무일</label>
+              <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>월 근무일</label>
               <input type="number" value={workDays} onChange={(e) => setWorkDays(Number(e.target.value))}
-                className={`${inputClass} text-right`} style={{ fontSize: '16px', height: '48px' }} />
+                className={`${inputClass} text-right`} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }} />
             </div>
             <div>
-              <label className="block font-semibold text-[#5a4a3a] mb-1" style={{ fontSize: '14px' }}>일 근무시간</label>
+              <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>일 근무시간</label>
               <input type="number" value={workHours} onChange={(e) => setWorkHours(Number(e.target.value))}
-                className={`${inputClass} text-right`} style={{ fontSize: '16px', height: '48px' }} />
+                className={`${inputClass} text-right`} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }} />
             </div>
           </div>
 
-          <p className="text-[#a09080] text-center" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+          <p className="text-center" style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)', color: 'var(--text-hint)' }}>
             비용은 업종 평균({BENCHMARKS[bizType].name})으로 자동 계산돼요.<br />
             매출만 입력하면 나머지는 자동!
           </p>
 
           <button onClick={handleSave} disabled={loading}
-            className="w-full rounded-xl bg-[#2D5A8E] text-white font-bold hover:bg-[#24496f] disabled:opacity-40 transition-colors"
-            style={{ fontSize: '18px', height: '56px' }}>
+            className="w-full rounded-xl text-white font-bold disabled:opacity-40 transition-colors"
+            style={{ fontSize: 'var(--font-size-lg)', height: '56px', background: 'var(--accent)' }}>
             {loading ? '저장 중...' : '설정 완료'}
           </button>
         </div>
