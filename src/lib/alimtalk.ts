@@ -1,4 +1,5 @@
-const NHN_API_URL = 'https://api-alimtalk.cloud.toast.com/alimtalk/v2.3/appkeys';
+const NHN_ALIMTALK_URL = 'https://api-alimtalk.cloud.toast.com/alimtalk/v2.3/appkeys';
+const NHN_SMS_URL = 'https://api-sms.cloud.toast.com/sms/v3.0/appkeys';
 
 function normalizePhone(phone: string): string {
   return phone.replace(/-/g, '');
@@ -15,7 +16,7 @@ export async function sendAlimtalk(params: {
   const { appKey, secretKey, senderKey, templateCode, recipientNo, templateParameter } = params;
 
   try {
-    const res = await fetch(`${NHN_API_URL}/${appKey}/messages`, {
+    const res = await fetch(`${NHN_ALIMTALK_URL}/${appKey}/messages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
@@ -42,6 +43,39 @@ export async function sendAlimtalk(params: {
       };
     }
 
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function sendSms(params: {
+  appKey: string;
+  secretKey: string;
+  senderNo: string;
+  recipientNo: string;
+  body: string;
+}): Promise<{ success: boolean; error?: string }> {
+  const { appKey, secretKey, senderNo, recipientNo, body } = params;
+
+  try {
+    const res = await fetch(`${NHN_SMS_URL}/${appKey}/sender/sms`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+        'X-Secret-Key': secretKey,
+      },
+      body: JSON.stringify({
+        body,
+        sendNo: normalizePhone(senderNo),
+        recipientList: [{ recipientNo: normalizePhone(recipientNo) }],
+      }),
+    });
+
+    const result = await res.json();
+    if (!res.ok || result.header?.isSuccessful === false) {
+      return { success: false, error: result.header?.resultMessage || res.statusText };
+    }
     return { success: true };
   } catch (err) {
     return { success: false, error: String(err) };

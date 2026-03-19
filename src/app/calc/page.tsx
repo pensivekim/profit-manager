@@ -361,8 +361,11 @@ export default function CalcPage() {
             <div id="pro-section">
               <ProCards
                 monthlyIncomeTax={result.monthlyIncomeTax}
+                vatProvision={result.vatProvision}
                 empCount={empCount}
+                insuranceCost={result.insuranceCost}
                 finalProfit={result.finalProfit}
+                rentPct={result.rentPct}
                 onConsult={(proType, proLabel) => setConsultModal({ proType, proLabel })}
               />
             </div>
