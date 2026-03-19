@@ -3,62 +3,81 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { fmtComma } from '@/lib/format';
+import { checkAlerts, checkMissingWeeks } from '@/lib/alerts';
+import type { WeeklyRecord, Alert } from '@/lib/alerts';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Filler,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Filler);
 
 interface MonthlyRecord {
   year_month: string;
   revenue: number;
   final_profit: number;
   hourly_wage: number;
-  cost_rent: number;
-  cost_labor: number;
-  cost_material: number;
-  cost_other: number;
+  week_count?: number;
+}
+
+function weekLabel(dateStr: string): string {
+  const d = new Date(dateStr);
+  const month = d.getMonth() + 1;
+  const weekNum = Math.ceil(d.getDate() / 7);
+  return `${month}/${weekNum}주`;
+}
+
+function yTickFmt(value: string | number): string {
+  const n = typeof value === 'string' ? parseInt(value) : value;
+  if (Math.abs(n) >= 10000) return `${Math.round(n / 10000)}만`;
+  return fmtComma(n);
 }
 
 export default function HistoryPage() {
-  const [records, setRecords] = useState<MonthlyRecord[]>([]);
+  const [tab, setTab] = useState<'weekly' | 'monthly'>('weekly');
+  const [weeklyRecords, setWeeklyRecords] = useState<WeeklyRecord[]>([]);
+  const [monthlyRecords, setMonthlyRecords] = useState<MonthlyRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedWeek, setSelectedWeek] = useState<WeeklyRecord | null>(null);
 
   useEffect(() => {
-    fetch('/api/history?businessId=guest')
-      .then((r) => r.json())
-      .then((data) => setRecords(data.records || []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    const userId = localStorage.getItem('pro_user_id') || '';
+    Promise.all([
+      fetch(`/api/history?type=weekly&weeks=8&userId=${userId}`).then(r => r.json()),
+      fetch(`/api/history?type=monthly&months=6&userId=${userId}`).then(r => r.json()),
+    ]).then(([w, m]) => {
+      setWeeklyRecords(w.records || []);
+      setMonthlyRecords(m.records || []);
+    }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">불러오는 중...</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F5F0E8' }}>
+        <p className="text-[#a09080]" style={{ fontSize: '16px' }}>불러오는 중...</p>
       </div>
     );
   }
 
-  if (records.length === 0) {
+  const noData = weeklyRecords.length === 0 && monthlyRecords.length === 0;
+  if (noData) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
         <div className="max-w-lg mx-auto px-4 py-8">
-          <h1 className="text-xl font-bold text-gray-900 mb-4">월별 내역</h1>
-          <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
-            <p className="text-3xl mb-3">{"\uD83D\uDCCA"}</p>
-            <p className="text-gray-600 mb-2">아직 기록이 없습니다</p>
-            <p className="text-sm text-gray-400 mb-4">메인 페이지에서 계산하면 자동 저장됩니다</p>
-            <Link href="/" className="inline-block py-2.5 px-6 rounded-xl bg-blue-600 text-white font-semibold">
-              계산하러 가기
+          <div className="rounded-2xl p-8 text-center border border-[#e0d5c5]" style={{ background: '#FFFDF7' }}>
+            <p className="text-4xl mb-3">{"\uD83D\uDCCA"}</p>
+            <p className="text-[#3a3025] font-bold mb-2" style={{ fontSize: '18px' }}>아직 기록이 없습니다</p>
+            <p className="text-[#a09080] mb-4" style={{ fontSize: '16px', lineHeight: '1.8' }}>매주 매출을 입력하면 추이를 볼 수 있어요</p>
+            <Link href="/weekly" className="inline-block py-3 px-8 rounded-xl bg-[#2D5A8E] text-white font-bold" style={{ fontSize: '16px', minHeight: '48px' }}>
+              매출 입력하러 가기
             </Link>
           </div>
         </div>
@@ -66,27 +85,60 @@ export default function HistoryPage() {
     );
   }
 
-  const labels = records.map((r) => r.year_month);
-  const profits = records.map((r) => r.final_profit);
+  // 경보 체크
+  const alerts: Alert[] = [...checkAlerts(weeklyRecords)];
+  const missingAlert = checkMissingWeeks(weeklyRecords);
+  if (missingAlert) alerts.push(missingAlert);
 
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        label: '실수령액',
-        data: profits,
-        borderColor: '#2563eb',
-        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-        fill: true,
-        tension: 0.3,
-        pointRadius: 5,
-        pointBackgroundColor: profits.map((p) => (p < 0 ? '#ef4444' : '#2563eb')),
-      },
-    ],
+  // 주별 차트용 데이터 (오래된 순)
+  const weeklyAsc = [...weeklyRecords].reverse();
+  const weekLabels = weeklyAsc.map(r => weekLabel(r.week_start));
+  const weekProfits = weeklyAsc.map(r => r.final_profit);
+
+  // 주별 요약
+  const recent4 = weeklyRecords.slice(0, 4);
+  const avg4 = recent4.length > 0 ? Math.round(recent4.reduce((s, r) => s + r.final_profit, 0) / recent4.length) : 0;
+  const best = weeklyRecords.length > 0 ? weeklyRecords.reduce((b, r) => r.final_profit > b.final_profit ? r : b) : null;
+  const worst = weeklyRecords.length > 0 ? weeklyRecords.reduce((w, r) => r.final_profit < w.final_profit ? r : w) : null;
+
+  // 이번 달 누적
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const thisMonthTotal = weeklyRecords.filter(r => r.week_start.startsWith(thisMonth)).reduce((s, r) => s + r.final_profit, 0);
+
+  // 월별 차트용 데이터
+  const monthlyAsc = [...monthlyRecords].reverse();
+  const monthLabels = monthlyAsc.map(r => r.year_month);
+  const monthProfits = monthlyAsc.map(r => r.final_profit);
+
+  const weeklyChartData = {
+    labels: weekLabels,
+    datasets: [{
+      label: '실수령액',
+      data: weekProfits,
+      borderColor: '#2D5A8E',
+      backgroundColor: 'rgba(45, 90, 142, 0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 6,
+      pointHoverRadius: 9,
+      pointBackgroundColor: weekProfits.map(p => p < 0 ? '#ef4444' : '#2D5A8E'),
+    }],
   };
 
-  const chartOptions = {
+  const monthlyChartData = {
+    labels: monthLabels,
+    datasets: [{
+      label: '실수령액',
+      data: monthProfits,
+      backgroundColor: monthProfits.map(p => p < 0 ? '#ef4444' : '#2D5A8E'),
+      borderRadius: 8,
+    }],
+  };
+
+  const chartOpts = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         callbacks: {
@@ -95,117 +147,179 @@ export default function HistoryPage() {
       },
     },
     scales: {
-      y: {
-        ticks: {
-          callback: (value: string | number) => {
-            const n = typeof value === 'string' ? parseInt(value) : value;
-            if (Math.abs(n) >= 10000) return `${Math.round(n / 10000)}만`;
-            return fmtComma(n);
-          },
-        },
-      },
+      y: { ticks: { callback: yTickFmt } },
+    },
+    onClick: (_: unknown, elements: { index: number }[]) => {
+      if (elements.length > 0 && tab === 'weekly') {
+        setSelectedWeek(weeklyAsc[elements[0].index]);
+      }
     },
   } as const;
 
-  // 전월 대비 증감
-  const changes: { month: string; diff: number; pct: number }[] = [];
-  for (let i = 1; i < records.length; i++) {
-    const prev = records[i - 1].final_profit;
-    const curr = records[i].final_profit;
-    const diff = curr - prev;
-    const pct = prev !== 0 ? Math.round((diff / Math.abs(prev)) * 100) : 0;
-    changes.push({ month: records[i].year_month, diff, pct });
-  }
-
-  // 위험 경보: 연속 감소 추세
-  let declineCount = 0;
-  for (let i = profits.length - 1; i > 0; i--) {
-    if (profits[i] < profits[i - 1]) declineCount++;
-    else break;
-  }
-  const lastProfit = profits[profits.length - 1];
-  const avgDecline = declineCount > 0 && profits.length > 1
-    ? Math.round((profits[profits.length - 1 - declineCount] - lastProfit) / declineCount)
-    : 0;
-  const monthsToZero = lastProfit > 0 && avgDecline > 0
-    ? Math.ceil(lastProfit / avgDecline)
-    : 0;
+  const alertBg = { danger: 'bg-red-500 text-white', warning: 'bg-amber-500 text-white', info: 'bg-[#2D5A8E]/10 text-[#2D5A8E]' };
+  const alertIcon = { danger: '\uD83D\uDEA8', warning: '\u26A0\uFE0F', info: '\uD83D\uDCDD' };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-xl font-bold text-gray-900">월별 내역</h1>
-          <Link href="/" className="text-sm text-blue-600 font-medium">
-            {"\u2190"} 계산기
-          </Link>
+    <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
+      <div className="max-w-lg mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <Link href="/" className="text-[#2D5A8E] font-semibold" style={{ fontSize: '16px' }}>{"\u2190"} 홈</Link>
+          <h1 className="font-bold text-[#3a3025]" style={{ fontSize: '20px' }}>내 추이</h1>
+          <Link href="/weekly" className="text-[#2D5A8E] font-semibold" style={{ fontSize: '14px' }}>입력 {"\u2192"}</Link>
         </div>
 
-        {/* 위험 경보 */}
-        {declineCount >= 2 && monthsToZero > 0 && (
-          <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 mb-4">
-            <p className="font-bold text-red-700 text-sm">
-              {"\uD83D\uDEA8"} {declineCount}개월 연속 하락 중
+        {/* 경보 배너 */}
+        {alerts.map((a, i) => (
+          <div key={i} className={`rounded-xl p-4 mb-3 ${alertBg[a.type]}`} style={{ lineHeight: '1.8' }}>
+            <p className="font-bold" style={{ fontSize: '16px' }}>
+              {alertIcon[a.type]} {a.msg}
             </p>
-            <p className="text-sm text-red-600 mt-1">
-              이 추세면 약 {monthsToZero}개월 후 적자 전환 위험이 있습니다.
-              전문가 상담을 권장합니다.
-            </p>
+            {a.link && (
+              <Link href={a.link} className="underline font-semibold" style={{ fontSize: '14px' }}>
+                확인하기 {"\u2192"}
+              </Link>
+            )}
           </div>
+        ))}
+
+        {/* 탭 */}
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {(['weekly', 'monthly'] as const).map(t => (
+            <button key={t} onClick={() => { setTab(t); setSelectedWeek(null); }}
+              className={`py-3 rounded-xl font-bold transition-all ${tab === t ? 'bg-[#2D5A8E] text-white' : 'text-[#5a4a3a]'}`}
+              style={{ fontSize: '16px', minHeight: '48px', background: tab === t ? undefined : '#FFFDF7' }}>
+              {t === 'weekly' ? '주별 추이' : '월별 추이'}
+            </button>
+          ))}
+        </div>
+
+        {/* 주별 탭 */}
+        {tab === 'weekly' && (
+          <>
+            {/* 차트 */}
+            <div className="rounded-2xl p-4 border border-[#e0d5c5] mb-4" style={{ background: '#FFFDF7', height: '280px' }}>
+              <h3 className="font-bold text-[#3a3025] mb-2" style={{ fontSize: '16px' }}>주별 실수령액</h3>
+              <div style={{ height: '220px' }}>
+                <Line data={weeklyChartData} options={chartOpts} />
+              </div>
+            </div>
+
+            {/* 요약 카드 */}
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
+                <p className="text-[#a09080]" style={{ fontSize: '14px' }}>최근 4주 평균</p>
+                <p className="font-bold text-[#2D5A8E]" style={{ fontSize: '20px' }}>{fmtComma(avg4)}원</p>
+              </div>
+              <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
+                <p className="text-[#a09080]" style={{ fontSize: '14px' }}>이번 달 누적</p>
+                <p className="font-bold text-[#3a3025]" style={{ fontSize: '20px' }}>{fmtComma(thisMonthTotal)}원</p>
+              </div>
+              {best && (
+                <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
+                  <p className="text-[#a09080]" style={{ fontSize: '14px' }}>최고 주</p>
+                  <p className="font-bold text-emerald-600" style={{ fontSize: '16px' }}>{weekLabel(best.week_start)} {fmtComma(best.final_profit)}원</p>
+                </div>
+              )}
+              {worst && (
+                <div className="rounded-xl p-4 border border-[#e0d5c5]" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
+                  <p className="text-[#a09080]" style={{ fontSize: '14px' }}>최저 주</p>
+                  <p className="font-bold text-red-500" style={{ fontSize: '16px' }}>{weekLabel(worst.week_start)} {fmtComma(worst.final_profit)}원</p>
+                </div>
+              )}
+            </div>
+
+            {/* 주 클릭 상세 */}
+            {selectedWeek && (
+              <div className="rounded-2xl p-5 border-2 border-[#2D5A8E] mb-4" style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
+                <div className="flex justify-between items-center mb-3">
+                  <h4 className="font-bold text-[#3a3025]" style={{ fontSize: '16px' }}>{weekLabel(selectedWeek.week_start)} 상세</h4>
+                  <button onClick={() => setSelectedWeek(null)} className="text-[#a09080] text-xl">&times;</button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-[#5a4a3a]" style={{ fontSize: '16px' }}>
+                  <div>매출: <span className="font-bold">{fmtComma(selectedWeek.revenue)}원</span></div>
+                  <div>실수령: <span className="font-bold">{fmtComma(selectedWeek.final_profit)}원</span></div>
+                  <div>시급: <span className="font-bold">{fmtComma(selectedWeek.hourly_wage)}원</span></div>
+                  <div>임대: <span className="font-bold">{fmtComma(selectedWeek.cost_rent || 0)}원</span></div>
+                  <div>인건비: <span className="font-bold">{fmtComma(selectedWeek.cost_labor || 0)}원</span></div>
+                  <div>재료비: <span className="font-bold">{fmtComma(selectedWeek.cost_material || 0)}원</span></div>
+                </div>
+                {selectedWeek.ai_comment && (
+                  <div className="mt-3 rounded-lg p-3" style={{ background: '#e8f5e9' }}>
+                    <p className="text-[#2e7d32]" style={{ fontSize: '16px' }}>{"\uD83E\uDD16"} {selectedWeek.ai_comment}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 주별 리스트 */}
+            <div className="space-y-2">
+              {weeklyRecords.map((r, i) => {
+                const prev = weeklyRecords[i + 1];
+                const diff = prev ? r.final_profit - prev.final_profit : 0;
+                return (
+                  <button key={r.week_start} onClick={() => setSelectedWeek(r)}
+                    className="w-full rounded-xl p-4 border border-[#e0d5c5] text-left"
+                    style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-[#3a3025]" style={{ fontSize: '16px' }}>{weekLabel(r.week_start)}</span>
+                      <div className="text-right">
+                        <span className={`font-bold ${r.final_profit >= 0 ? 'text-[#2D5A8E]' : 'text-red-500'}`} style={{ fontSize: '16px' }}>
+                          {fmtComma(r.final_profit)}원
+                        </span>
+                        {prev && (
+                          <span className={`ml-2 ${diff >= 0 ? 'text-emerald-600' : 'text-red-500'}`} style={{ fontSize: '14px' }}>
+                            {diff >= 0 ? '\u25B2' : '\u25BC'}{fmtComma(Math.abs(diff))}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </>
         )}
 
-        {lastProfit < 0 && (
-          <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 mb-4">
-            <p className="font-bold text-red-700 text-sm">
-              {"\uD83D\uDEA8"} 현재 적자 상태입니다
-            </p>
-            <p className="text-sm text-red-600 mt-1">
-              원가 절감 또는 매출 증대 전략이 시급합니다.
-            </p>
-          </div>
+        {/* 월별 탭 */}
+        {tab === 'monthly' && (
+          <>
+            <div className="rounded-2xl p-4 border border-[#e0d5c5] mb-4" style={{ background: '#FFFDF7', height: '280px' }}>
+              <h3 className="font-bold text-[#3a3025] mb-2" style={{ fontSize: '16px' }}>월별 실수령액</h3>
+              <div style={{ height: '220px' }}>
+                <Bar data={monthlyChartData} options={chartOpts} />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {monthlyRecords.map((r, i) => {
+                const prev = monthlyRecords[i + 1];
+                const diff = prev ? (r.final_profit as number) - (prev.final_profit as number) : 0;
+                return (
+                  <div key={r.year_month} className="rounded-xl p-4 border border-[#e0d5c5]"
+                    style={{ background: '#FFFDF7', lineHeight: '1.8' }}>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-[#3a3025]" style={{ fontSize: '16px' }}>{r.year_month}</span>
+                        {r.week_count && <span className="text-[#a09080] ml-2" style={{ fontSize: '14px' }}>({r.week_count}주)</span>}
+                      </div>
+                      <div className="text-right">
+                        <span className={`font-bold ${(r.final_profit as number) >= 0 ? 'text-[#2D5A8E]' : 'text-red-500'}`} style={{ fontSize: '16px' }}>
+                          {fmtComma(r.final_profit as number)}원
+                        </span>
+                        {prev && (
+                          <span className={`ml-2 ${diff >= 0 ? 'text-emerald-600' : 'text-red-500'}`} style={{ fontSize: '14px' }}>
+                            {diff >= 0 ? '\u25B2' : '\u25BC'}{fmtComma(Math.abs(diff))}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
-
-        {/* 차트 */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
-          <h3 className="font-bold text-gray-800 mb-3 text-sm">실수령액 추이</h3>
-          <Line data={chartData} options={chartOptions} />
-        </div>
-
-        {/* 전월 대비 */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
-          <h3 className="font-bold text-gray-800 mb-3 text-sm">전월 대비 증감</h3>
-          <div className="space-y-2">
-            {changes.map((c) => (
-              <div key={c.month} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                <span className="text-sm text-gray-600">{c.month}</span>
-                <span className={`text-sm font-semibold ${c.diff >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {c.diff >= 0 ? '+' : ''}{fmtComma(c.diff)}원 ({c.diff >= 0 ? '+' : ''}{c.pct}%)
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 월별 상세 */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-800 mb-3 text-sm">월별 상세</h3>
-          <div className="space-y-3">
-            {[...records].reverse().map((r) => (
-              <div key={r.year_month} className="p-3 bg-gray-50 rounded-xl">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="font-semibold text-gray-800 text-sm">{r.year_month}</span>
-                  <span className={`font-bold text-sm ${r.final_profit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                    {fmtComma(r.final_profit)}원
-                  </span>
-                </div>
-                <div className="flex gap-3 text-xs text-gray-500">
-                  <span>매출 {fmtComma(r.revenue)}</span>
-                  <span>시급 {fmtComma(r.hourly_wage)}원</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
