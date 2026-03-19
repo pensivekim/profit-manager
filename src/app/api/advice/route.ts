@@ -2,18 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma } from '@/lib/format';
 
+// Cloudflare AI Gateway 경유 Gemini
+const GATEWAY_BASE = 'https://gateway.ai.cloudflare.com/v1/f6c784dae2ac774f3f877b4ba39a88d6/carebot/google-ai-studio';
+const MODEL = 'gemini-2.5-flash-lite';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { calcResult, bizType, taxType, revenue, empCount } = body;
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
     const bm = BENCHMARKS[bizType as BizType];
-    const accountId = process.env.CF_ACCOUNT_ID || '';
 
     const systemPrompt = `당신은 소상공인 경영 전문 어드바이저입니다.
 사업자의 월별 수입/지출/세금 데이터를 분석하여 실질적이고 구체적인 경영 조언을 제공합니다.
@@ -53,33 +56,30 @@ export async function POST(req: NextRequest) {
 
 이 데이터를 분석하여 경영 조언을 JSON으로 제공해주세요.`;
 
-    const endpoint = accountId
-      ? `https://gateway.ai.cloudflare.com/v1/${accountId}/carebot/anthropic/v1/messages`
-      : 'https://api.anthropic.com/v1/messages';
+    const endpoint = `${GATEWAY_BASE}/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
 
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }],
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ parts: [{ text: userPrompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1024,
+          responseMimeType: 'application/json',
+        },
       }),
     });
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error('Anthropic API error:', errText);
+      console.error('Gemini API error:', errText);
       return NextResponse.json({ error: 'AI API call failed' }, { status: 502 });
     }
 
     const data = await res.json();
-    const text = data.content?.[0]?.text || '';
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
     // JSON 파싱 (코드블록 감싸진 경우 처리)
     const jsonMatch = text.match(/\{[\s\S]*"advices"[\s\S]*\}/);

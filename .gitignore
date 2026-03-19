@@ -38,6 +38,7 @@ yarn-error.log*
 
 # wrangler
 .wrangler
+.dev.vars
 
 # typescript
 *.tsbuildinfo
