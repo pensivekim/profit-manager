@@ -195,15 +195,15 @@ export default function CalcPage() {
     step: number,
   ) => (
     <div>
-      <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{label}</label>
+      <label className="block text-sm font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{label}</label>
       <div className="relative">
         <input
           type="number"
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           step={step}
-          className="w-full rounded-lg border border-border px-4 py-3 text-right text-base outline-none"
-          style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
+          className="w-full rounded-lg border border-border px-4 py-3 text-right outline-none"
+          style={{ fontSize: '16px', minHeight: '48px', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
         />
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--text-hint)' }}>{suffix}</span>
       </div>
@@ -243,7 +243,10 @@ export default function CalcPage() {
 
           {/* 지역 */}
           <div>
-            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{"\uD83D\uDCCD"} 사업장 지역</label>
+            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>
+              {"\uD83D\uDCCD"} 사업장 지역
+              <span style={{ fontSize: '11px', color: '#9A9690', marginLeft: '6px', fontWeight: 'normal' }}>(지역마다 지표가 다르게 계산됩니다)</span>
+            </label>
             <select
               value={region}
               onChange={(e) => handleRegionChange(e.target.value as RegionCode)}
@@ -291,7 +294,7 @@ export default function CalcPage() {
 
           {/* 직원/근무 */}
           <div className="pt-3 border-t border-border">
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {numInput('직원 수', empCount, setEmpCount, '명', 1)}
               {numInput('월 근무일', workDays, setWorkDays, '일', 1)}
               {numInput('일 근무시간', workHours, setWorkHours, '시간', 1)}
