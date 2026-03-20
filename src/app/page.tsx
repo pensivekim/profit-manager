@@ -51,7 +51,7 @@ export default function LandingPage() {
           모르는 사장님이 대부분입니다.
         </p>
         <a href="/api/auth/kakao"
-          className="block w-full mt-8 rounded-2xl font-bold hover:brightness-95 active:scale-[0.98] transition-all"
+          className="block w-full mt-8 rounded-2xl font-bold hover:brightness-95 active:scale-[0.98] transition-all kakao-glow"
           style={{
             background: '#FEE500',
             color: '#191919',

@@ -67,6 +67,15 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(45,90,142,0.12);
 }
 
+/* 카카오 버튼 깜박임 */
+@keyframes kakao-pulse {
+  0%, 100% { box-shadow: 0 4px 14px rgba(254, 229, 0, 0.4); }
+  50% { box-shadow: 0 4px 24px rgba(254, 229, 0, 0.8), 0 0 0 6px rgba(254, 229, 0, 0.15); }
+}
+.kakao-glow {
+  animation: kakao-pulse 2s ease-in-out infinite;
+}
+
 /* 스크롤바 */
 @media (min-width: 768px) {
   ::-webkit-scrollbar { width: 6px; height: 6px; }
