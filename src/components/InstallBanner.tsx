@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { isPWAInstalled } from '@/lib/push';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -9,40 +9,46 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallBanner() {
-  const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [dismissed, setDismissed] = useState(true);
+  const [show, setShow] = useState(false);
+  const promptRef = useRef<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     if (isPWAInstalled()) return;
     const d = localStorage.getItem('install_banner_dismissed');
     if (d && (Date.now() - new Date(d).getTime()) / 86400000 < 7) return;
 
-    // show banner after short delay to avoid sync setState
-    const timer = setTimeout(() => setDismissed(false), 500);
-
     const handler = (e: Event) => {
       e.preventDefault();
-      setPrompt(e as BeforeInstallPromptEvent);
+      promptRef.current = e as BeforeInstallPromptEvent;
     };
     window.addEventListener('beforeinstallprompt', handler);
-    return () => { clearTimeout(timer); window.removeEventListener('beforeinstallprompt', handler); };
+
+    const timer = setTimeout(() => setShow(true), 1500);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
   }, []);
 
-  if (dismissed) return null;
+  if (!show) return null;
 
-  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   const handleInstall = async () => {
-    if (prompt) {
-      await prompt.prompt();
-      const { outcome } = await prompt.userChoice;
-      if (outcome === 'accepted') setDismissed(true);
+    if (promptRef.current) {
+      await promptRef.current.prompt();
+      const { outcome } = await promptRef.current.userChoice;
+      if (outcome === 'accepted') setShow(false);
+    } else {
+      // prompt 없으면 안내 알림
+      alert('브라우저 메뉴(⋮)에서 "홈 화면에 추가"를 눌러주세요.');
     }
   };
 
   const handleDismiss = () => {
     localStorage.setItem('install_banner_dismissed', new Date().toISOString());
-    setDismissed(true);
+    setShow(false);
   };
 
   return (
