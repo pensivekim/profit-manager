@@ -63,7 +63,7 @@ export default function LandingPage() {
           {"\uD83D\uDCAC"} 카카오로 무료 시작하기
         </a>
         <p className="mt-3" style={{ fontSize: '13px', color: '#9A9690' }}>
-          가입 30초 · 완전 무료 · 카드 불필요
+          가입 5초 · 완전 무료 · 카드 불필요
         </p>
         <div className="mt-4 rounded-xl px-4 py-3 flex items-center justify-center gap-2"
           style={{ background: 'rgba(45, 90, 142, 0.08)', border: '1px solid rgba(45, 90, 142, 0.15)' }}>
@@ -105,8 +105,8 @@ export default function LandingPage() {
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { emoji: '\uD83E\uDDEE', title: '진짜 실수령액', desc: '세금·보험·수수료 다 빼고\n내 손에 얼마 남는지' },
-            { emoji: '\uD83D\uDCCA', title: '지역별 업종 평균 비교', desc: '대구 식당 평균이랑\n내 가게가 어떻게 다른지' },
+            { emoji: '\uD83E\uDDEE', title: '진짜 남은 돈', desc: '세금·보험·수수료 다 빼고\n내 손에 얼마 남는지' },
+            { emoji: '\uD83D\uDCCA', title: '지역별 업종 평균 비교', desc: '우리 동네 식당 평균이랑\n내 가게가 어떻게 다른지' },
             { emoji: '\uD83E\uDD16', title: 'AI 경영 조언', desc: '재료비가 왜 높은지,\n어떻게 줄일 수 있는지' },
             { emoji: '\uD83D\uDC64', title: '전문가 바로 연결', desc: '세무사·노무사에게\n내 데이터로 바로 상담' },
           ].map((item) => (

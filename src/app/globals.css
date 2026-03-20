@@ -68,12 +68,12 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* 카카오 버튼 깜박임 */
-@keyframes kakao-pulse {
-  0%, 100% { box-shadow: 0 4px 14px rgba(254, 229, 0, 0.4); }
-  50% { box-shadow: 0 4px 24px rgba(254, 229, 0, 0.8), 0 0 0 6px rgba(254, 229, 0, 0.15); }
+@keyframes kakao-blink {
+  0%, 100% { transform: scale(1); background: #FEE500; }
+  50% { transform: scale(1.03); background: #FFD700; }
 }
 .kakao-glow {
-  animation: kakao-pulse 2s ease-in-out infinite;
+  animation: kakao-blink 1.5s ease-in-out infinite;
 }
 
 /* 스크롤바 */
