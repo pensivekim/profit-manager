@@ -25,10 +25,13 @@ export default function LandingPage() {
       {/* [1] 헤더 */}
       <header className="flex items-center justify-between px-4 py-4 max-w-lg mx-auto">
         <div>
-          <span className="font-bold block" style={{ fontSize: '18px', color: '#2D3748' }}>
-            KBS비즈니스
-          </span>
-          <span style={{ fontSize: '11px', color: '#9A9690' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://i.namu.wiki/i/vigPtU4k4pvRqXkyv_DpcJJ7tlxTRBpGfnDB2eU5JYIvZ_gRqwJ8NTQRRfpy7bY1vao1L_CCt3yyB7-460mv9FZdE951vAEeE-BX6bDqGRY3RrsBr2IZC4jDUsc2Kc4JVVWRD7l-eT3bCrwCdAy_gA.svg"
+            alt="KBS비즈니스"
+            style={{ height: '28px', objectFit: 'contain' }}
+          />
+          <span className="block" style={{ fontSize: '11px', color: '#9A9690', marginTop: '2px' }}>
             소상공인 분들과 함께 합니다.
           </span>
         </div>
