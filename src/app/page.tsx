@@ -53,14 +53,21 @@ export default function LandingPage() {
           모르는 사장님이 대부분입니다.
         </p>
         <a href="/api/auth/kakao"
-          className="block w-full mt-8 rounded-xl font-bold hover:opacity-90 transition-opacity"
-          style={{ background: '#FEE500', color: '#191919', fontSize: '18px', height: '56px', lineHeight: '56px' }}>
+          className="block w-full mt-8 rounded-2xl font-bold hover:brightness-95 active:scale-[0.98] transition-all"
+          style={{
+            background: '#FEE500',
+            color: '#191919',
+            fontSize: '19px',
+            height: '60px',
+            lineHeight: '60px',
+            boxShadow: '0 4px 14px rgba(254, 229, 0, 0.5)',
+          }}>
           {"\uD83D\uDCAC"} 카카오로 무료 시작하기
         </a>
-        <p className="mt-2" style={{ fontSize: '13px', color: '#9A9690' }}>
+        <p className="mt-3" style={{ fontSize: '13px', color: '#9A9690' }}>
           가입 30초 · 완전 무료 · 카드 불필요
         </p>
-        <p style={{ fontSize: '12px', color: '#9A9690', marginTop: '8px', lineHeight: '1.6' }}>
+        <p style={{ fontSize: '12px', color: '#9A9690', marginTop: '6px', lineHeight: '1.6' }}>
           {"\uD83D\uDD12"} 입력하신 데이터는 외부에 유출되거나 공유되지 않습니다.
         </p>
       </section>
