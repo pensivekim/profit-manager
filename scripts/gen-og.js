@@ -11,28 +11,17 @@ const kbsLogoBase64 = Buffer.from(kbsLogoSvg).toString('base64');
 
 const svg = `
 <svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="#F5F0E8"/>
+  <!-- 상단 절반: 흰색 배경 + 로고 크게 -->
+  <rect width="${WIDTH}" height="320" fill="#FFFFFF"/>
+  <image href="data:image/svg+xml;base64,${kbsLogoBase64}" x="150" y="60" width="900" height="200"/>
 
-  <!-- KBS 로고 (크게) -->
-  <image href="data:image/svg+xml;base64,${kbsLogoBase64}" x="300" y="20" width="600" height="130"/>
-
-  <!-- 메인 텍스트 (크게) -->
-  <text x="600" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="100" font-weight="bold" fill="#2C2C2A">
-    열심히 일했는데,
+  <!-- 하단 절반: 파란 배경 + 텍스트 -->
+  <rect y="320" width="${WIDTH}" height="310" fill="#2D5A8E"/>
+  <text x="600" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white">
+    열심히 일했는데, 왜 통장엔 없지?
   </text>
-  <text x="600" y="400" text-anchor="middle" font-family="Arial, sans-serif" font-size="100" font-weight="bold" fill="#2C2C2A">
-    왜 통장엔 없지?
-  </text>
-
-  <!-- 서브 텍스트 -->
-  <text x="600" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" fill="#5F5E5A">
-    소상공인 분들과 함께 합니다.
-  </text>
-
-  <!-- 하단 파란 바 -->
-  <rect x="0" y="530" width="${WIDTH}" height="100" fill="#2D5A8E"/>
-  <text x="600" y="595" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="bold" fill="white">
-    pro.genomic.cc
+  <text x="600" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" fill="rgba(255,255,255,0.8)">
+    소상공인 분들과 함께 합니다
   </text>
 </svg>
 `;
