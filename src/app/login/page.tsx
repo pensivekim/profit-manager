@@ -112,11 +112,31 @@ export default function LoginPage() {
           {step === 'phone' ? (
             <div>
               <h1 className="font-bold text-center mb-2" style={{ fontSize: 'var(--font-size-xl)', color: 'var(--text-primary)', lineHeight: 'var(--line-height)' }}>
-                사장님, 전화번호로{'\n'}로그인하세요
+                사장님, 로그인하세요
               </h1>
-              <p className="text-center mb-8" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)', lineHeight: 'var(--line-height)' }}>
-                가입도 로그인도 전화번호 하나면 돼요
+              <p className="text-center mb-6" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)', lineHeight: 'var(--line-height)' }}>
+                간편하게 시작하세요
               </p>
+
+              {/* 카카오 로그인 */}
+              <a href="/api/auth/kakao" className="block mb-4">
+                <button
+                  type="button"
+                  className="w-full rounded-xl font-medium hover:opacity-90 transition-opacity"
+                  style={{
+                    background: '#FEE500', color: '#191919', border: 'none',
+                    fontSize: '16px', height: '56px', cursor: 'pointer',
+                  }}
+                >
+                  {"\uD83D\uDCAC"} 카카오로 시작하기
+                </button>
+              </a>
+
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex-1 border-t" style={{ borderColor: 'var(--border)' }} />
+                <span style={{ fontSize: '13px', color: '#9A9690' }}>또는 전화번호로 로그인</span>
+                <div className="flex-1 border-t" style={{ borderColor: 'var(--border)' }} />
+              </div>
 
               <div className="rounded-2xl p-6 border border-border" style={{ background: 'var(--bg-card)' }}>
                 <label className="block font-semibold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>
