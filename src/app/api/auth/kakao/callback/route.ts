@@ -73,6 +73,7 @@ export async function GET(req: NextRequest) {
     const userData = await userRes.json();
     const kakaoId = String(userData.id);
     const nickname = userData.properties?.nickname || '';
+    const email = userData.kakao_account?.email || '';
 
     // 3. D1 사용자 조회/생성
     const db = env.DB as D1DB | undefined;
@@ -89,16 +90,15 @@ export async function GET(req: NextRequest) {
 
     if (existing) {
       userId = existing.id as string;
-      // 닉네임 업데이트
-      if (nickname) {
-        await db.prepare('UPDATE users SET nickname = ? WHERE id = ?').bind(nickname, userId).run();
-      }
+      // 닉네임/이메일 업데이트
+      await db.prepare('UPDATE users SET nickname = ?, email = COALESCE(NULLIF(?, ""), email) WHERE id = ?')
+        .bind(nickname, email, userId).run();
     } else {
       userId = `kakao-${kakaoId}`;
       await db.prepare(
-        `INSERT OR REPLACE INTO users (id, kakao_id, nickname, name, phone, biz_type, tax_type, emp_count, work_days, work_hours, plan)
-         VALUES (?, ?, ?, ?, '', 'restaurant', 'general', 0, 25, 10, 'free')`
-      ).bind(userId, kakaoId, nickname, nickname).run();
+        `INSERT OR REPLACE INTO users (id, kakao_id, nickname, name, email, phone, biz_type, tax_type, emp_count, work_days, work_hours, plan)
+         VALUES (?, ?, ?, ?, ?, '', 'restaurant', 'general', 0, 25, 10, 'free')`
+      ).bind(userId, kakaoId, nickname, nickname, email || null).run();
       isNew = true;
     }
 
