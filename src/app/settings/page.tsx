@@ -132,7 +132,7 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>{"\uD83D\uDCCD"} \uC0AC\uC5C5\uC7A5 \uC9C0\uC5ED</label>
+            <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>{"\uD83D\uDCCD"} 사업장 지역</label>
             <select value={region} onChange={(e) => setRegion(e.target.value as RegionCode)}
               className={inputClass} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }}>
               {REGION_LIST.map((r) => <option key={r.code} value={r.code}>{r.label}</option>)}
@@ -140,7 +140,7 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block font-semibold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>\uACFC\uC138\uC720\uD615</label>
+            <label className="block font-semibold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>과세유형</label>
             <div className="grid grid-cols-2 gap-2">
               {(['general', 'simplified'] as const).map((t) => (
                 <button key={t} onClick={() => setTaxType(t)}

@@ -18,10 +18,10 @@ interface Props {
 }
 
 const LABELS = [
-  { key: 'rent', label: '\uC784\uB300\uB8CC', color: 'bg-blue-800' },
-  { key: 'labor', label: '\uC778\uAC74\uBE44', color: 'bg-amber-500' },
-  { key: 'material', label: '\uC7AC\uB8CC/\uB9E4\uC785', color: 'bg-emerald-600' },
-  { key: 'other', label: '\uAE30\uD0C0\uACBD\uBE44', color: 'bg-purple-500' },
+  { key: 'rent', label: '임대료', color: 'bg-blue-800' },
+  { key: 'labor', label: '인건비', color: 'bg-amber-500' },
+  { key: 'material', label: '재료/매입', color: 'bg-emerald-600' },
+  { key: 'other', label: '기타경비', color: 'bg-purple-500' },
 ] as const;
 
 export default function CostBars(props: Props) {
@@ -39,16 +39,16 @@ export default function CostBars(props: Props) {
   const bmVals = { rent: adjustedBm.rent, labor: adjustedBm.labor, material: adjustedBm.material, other: adjustedBm.other };
 
   const regionLabel = props.region ? getRegionLabel(props.region) : null;
-  const avgPrefix = regionLabel ? `${regionLabel} \uD3C9\uADE0` : '\uD3C9\uADE0';
+  const avgPrefix = regionLabel ? `${regionLabel} 평균` : '평균';
 
   return (
     <div className="rounded-2xl p-5 shadow-sm border border-border" style={{ background: 'var(--bg-card)' }}>
       <h3 className="font-bold mb-1" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
-        {"\uD83D\uDCCA"} \uC6D0\uAC00 \uAD6C\uC870 \uBD84\uC11D
+        {"\uD83D\uDCCA"} 원가 구조 분석
       </h3>
       {regionLabel && (
         <p className="mb-3" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>
-          {regionLabel} \uAE30\uC900 \uBCA4\uCE58\uB9C8\uD06C \uC801\uC6A9
+          {regionLabel} 기준 벤치마크 적용
         </p>
       )}
       <div className="space-y-4">

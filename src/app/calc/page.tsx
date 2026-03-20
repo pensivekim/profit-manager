@@ -243,7 +243,7 @@ export default function CalcPage() {
 
           {/* 지역 */}
           <div>
-            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{"\uD83D\uDCCD"} \uC0AC\uC5C5\uC7A5 \uC9C0\uC5ED</label>
+            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{"\uD83D\uDCCD"} 사업장 지역</label>
             <select
               value={region}
               onChange={(e) => handleRegionChange(e.target.value as RegionCode)}
@@ -291,7 +291,7 @@ export default function CalcPage() {
 
           {/* 직원/근무 */}
           <div className="pt-3 border-t border-border">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               {numInput('직원 수', empCount, setEmpCount, '명', 1)}
               {numInput('월 근무일', workDays, setWorkDays, '일', 1)}
               {numInput('일 근무시간', workHours, setWorkHours, '시간', 1)}
@@ -331,10 +331,10 @@ export default function CalcPage() {
             {result.isRentDanger && (
               <div className="rounded-xl p-4" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
                 <p className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)' }}>
-                  {"\uD83D\uDEA8"} \uC784\uB300\uB8CC\uAC00 {getRegionLabel(region)} \uAE30\uC900 \uD3C9\uADE0\uBCF4\uB2E4 {result.rentPct - result.rentDangerThreshold}%p \uB192\uC2B5\uB2C8\uB2E4
+                  {"\uD83D\uDEA8"} 임대료가 {getRegionLabel(region)} 기준 평균보다 {result.rentPct - result.rentDangerThreshold}%p 높습니다
                 </p>
                 <p className="text-red-500 mt-1" style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)' }}>
-                  {getRegionLabel(region)} \uC704\uD5D8 \uAE30\uC900: \uB9E4\uCD9C\uC758 {result.rentDangerThreshold}% | \uD604\uC7AC: {result.rentPct}%
+                  {getRegionLabel(region)} 위험 기준: 매출의 {result.rentDangerThreshold}% | 현재: {result.rentPct}%
                 </p>
               </div>
             )}
