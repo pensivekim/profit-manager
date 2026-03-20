@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     title: "KBS비즈니스 | 열심히 일했는데, 왜 통장엔 없지?",
     description: "세금 다 빼고 진짜 내 손에 남는 돈을 확인하세요. KBS비즈니스와 함께하는 소상공인 무료 경영파트너.",
     images: [{
-      url: "https://pro.genomic.cc/og-image.png",
+      url: "https://pro.genomic.cc/og-image-v2.png",
       width: 1200,
       height: 630,
       alt: "사장님경영파트너 — KBS비즈니스와 함께",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "열심히 일했는데, 왜 통장엔 없지?",
     description: "세금 다 빼고 진짜 내 손에 남는 돈을 확인하세요. KBS비즈니스와 함께하는 소상공인 무료 경영파트너.",
-    images: ["https://pro.genomic.cc/og-image.png"],
+    images: ["https://pro.genomic.cc/og-image-v2.png"],
   },
   alternates: {
     canonical: "https://pro.genomic.cc",
