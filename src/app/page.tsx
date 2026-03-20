@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import ShareButton from '@/components/ShareButton';
 
 export default function LandingPage() {
   return (
@@ -165,20 +166,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 카카오 공유 */}
-      <div className="max-w-5xl mx-auto text-center" style={{ padding: '28px 16px', background: '#F5F0E8' }}>
-        <p style={{ fontSize: '14px', color: '#5F5E5A', marginBottom: '12px' }}>
-          주변 사장님께 공유해주세요
-        </p>
-        <a
-          href="https://sharer.kakao.com/talk/friends/picker/link?app_key=95020a3f73c2162a1e888e9af1986d1e&request_url=https%3A%2F%2Fpro.genomic.cc"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl font-medium hover:brightness-95 transition-all"
-          style={{ background: '#FEE500', color: '#191919', padding: '12px 28px', fontSize: '15px' }}>
-          {"\uD83D\uDCAC"} 카카오톡으로 공유하기
-        </a>
-      </div>
+      {/* 공유 */}
+      <ShareButton />
 
       {/* [7] 푸터 */}
       <footer className="max-w-5xl mx-auto px-4 md:px-8 py-8 text-center" style={{ background: '#F5F0E8' }}>
