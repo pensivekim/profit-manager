@@ -29,7 +29,7 @@ export default function LandingPage() {
             alt="KBS비즈니스"
             style={{ height: '28px', objectFit: 'contain' }}
           />
-          <span className="block" style={{ fontSize: '11px', color: '#9A9690', marginTop: '2px' }}>
+          <span className="block font-semibold" style={{ fontSize: '15px', color: '#4A4A4A', marginTop: '2px' }}>
             소상공인 분들과 함께 합니다.
           </span>
         </div>
