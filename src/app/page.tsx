@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 
 export default function LandingPage() {
@@ -27,7 +25,7 @@ export default function LandingPage() {
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://i.namu.wiki/i/vigPtU4k4pvRqXkyv_DpcJJ7tlxTRBpGfnDB2eU5JYIvZ_gRqwJ8NTQRRfpy7bY1vao1L_CCt3yyB7-460mv9FZdE951vAEeE-BX6bDqGRY3RrsBr2IZC4jDUsc2Kc4JVVWRD7l-eT3bCrwCdAy_gA.svg"
+            src="/kbs-logo.svg"
             alt="KBS비즈니스"
             style={{ height: '28px', objectFit: 'contain' }}
           />
