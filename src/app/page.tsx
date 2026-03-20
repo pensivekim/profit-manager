@@ -67,9 +67,13 @@ export default function LandingPage() {
         <p className="mt-3" style={{ fontSize: '13px', color: '#9A9690' }}>
           가입 30초 · 완전 무료 · 카드 불필요
         </p>
-        <p style={{ fontSize: '12px', color: '#9A9690', marginTop: '6px', lineHeight: '1.6' }}>
-          {"\uD83D\uDD12"} 입력하신 데이터는 외부에 유출되거나 공유되지 않습니다.
-        </p>
+        <div className="mt-4 rounded-xl px-4 py-3 flex items-center justify-center gap-2"
+          style={{ background: 'rgba(45, 90, 142, 0.08)', border: '1px solid rgba(45, 90, 142, 0.15)' }}>
+          <span style={{ fontSize: '18px' }}>{"\uD83D\uDD12"}</span>
+          <span className="font-semibold" style={{ fontSize: '14px', color: '#2D5A8E', lineHeight: '1.5' }}>
+            입력하신 데이터는 외부에 유출되거나 공유되지 않습니다.
+          </span>
+        </div>
       </section>
 
       {/* [3] 공감 섹션 */}
