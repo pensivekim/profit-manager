@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calcAll } from '@/lib/taxCalc';
-import { BENCHMARKS, BizType } from '@/lib/benchmarks';
+import { BENCHMARKS, BizType, MIN_WAGE_MONTHLY } from '@/lib/benchmarks';
 import { fmtComma } from '@/lib/format';
 
 export const runtime = 'edge';
@@ -111,10 +111,12 @@ export async function POST(req: NextRequest) {
 
     const bm = BENCHMARKS[bizType];
     const rev = Number(revenue);
-    // 사용자 고정비용이 없으면 업종 평균으로 계산
+    // 사용자 고정비용이 없으면 업종 평균으로 계산 (최저임금 하한선 적용)
     if (costRent === 0 && costLabor === 0 && costMaterial === 0 && costOther === 0) {
       costRent = Math.round(rev * bm.rent / 100);
-      costLabor = Math.round(rev * bm.labor / 100);
+      const laborByAvg = Math.round(rev * bm.labor / 100);
+      const laborByMinWage = empCount * MIN_WAGE_MONTHLY;
+      costLabor = Math.max(laborByAvg, laborByMinWage);
       costMaterial = Math.round(rev * bm.material / 100);
       costOther = Math.round(rev * bm.other / 100);
     }

@@ -12,6 +12,9 @@ export const BENCHMARKS = {
 
 export type BizType = keyof typeof BENCHMARKS;
 
+// 2026년 최저임금: 10,030원 × 209시간 = 2,096,270원/월
+export const MIN_WAGE_MONTHLY = 2100000;
+
 export const TAX_BRACKETS = [
   { limit: 14000000,   rate: 0.06, deduction: 0         },
   { limit: 50000000,   rate: 0.15, deduction: 1080000   },

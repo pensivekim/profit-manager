@@ -4,7 +4,8 @@ import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma, fmtKRW } from '@/lib/format';
-import { RegionCode, REGION_LIST, REGION_COST_ADJUST, getRegionLabel } from '@/lib/regions';
+import { RegionCode, REGION_LIST, getRegionLabel } from '@/lib/regions';
+import { calcCostDefaults } from '@/lib/costDefaults';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import ResultSummary from '@/components/ResultSummary';
@@ -47,21 +48,15 @@ interface CalcResult {
   [key: string]: number | boolean | { rent: number; labor: number; material: number; other: number };
 }
 
-function calcDefaults(biz: BizType, rev: number, region?: RegionCode) {
-  const bm = BENCHMARKS[biz];
-  const adj = region ? REGION_COST_ADJUST[region] : null;
-  return {
-    costRent: Math.round(rev * (bm.rent + (adj?.rent ?? 0)) / 100),
-    costLabor: Math.round(rev * (bm.labor + (adj?.labor ?? 0)) / 100),
-    costMaterial: Math.round(rev * (bm.material + (adj?.material ?? 0)) / 100),
-    costOther: Math.round(rev * bm.other / 100),
-  };
+function calcDefaults(biz: BizType, rev: number, emp: number, region?: RegionCode) {
+  return calcCostDefaults(biz, rev, emp, region);
 }
 
 const initBiz: BizType = 'restaurant';
 const initRev = 20000000;
 const initRegion: RegionCode = 'daegu';
-const initDefaults = calcDefaults(initBiz, initRev, initRegion);
+const initEmp = 1;
+const initDefaults = calcDefaults(initBiz, initRev, initEmp, initRegion);
 
 export default function CalcPage() {
   const [bizType, setBizType] = useState<BizType>(initBiz);
@@ -86,8 +81,8 @@ export default function CalcPage() {
 
   const bm = BENCHMARKS[bizType];
 
-  const applyDefaults = useCallback((biz: BizType, rev: number, reg?: RegionCode) => {
-    const d = calcDefaults(biz, rev, reg);
+  const applyDefaults = useCallback((biz: BizType, rev: number, emp: number, reg?: RegionCode) => {
+    const d = calcDefaults(biz, rev, emp, reg);
     setCostRent(d.costRent);
     setCostLabor(d.costLabor);
     setCostMaterial(d.costMaterial);
@@ -96,17 +91,22 @@ export default function CalcPage() {
 
   const handleBizChange = (newBiz: BizType) => {
     setBizType(newBiz);
-    applyDefaults(newBiz, revenue, region);
+    applyDefaults(newBiz, revenue, empCount, region);
   };
 
   const handleRevenueChange = (newRev: number) => {
     setRevenue(newRev);
-    applyDefaults(bizType, newRev, region);
+    applyDefaults(bizType, newRev, empCount, region);
   };
 
   const handleRegionChange = (newRegion: RegionCode) => {
     setRegion(newRegion);
-    applyDefaults(bizType, revenue, newRegion);
+    applyDefaults(bizType, revenue, empCount, newRegion);
+  };
+
+  const handleEmpChange = (newEmp: number) => {
+    setEmpCount(newEmp);
+    applyDefaults(bizType, revenue, newEmp, region);
   };
 
   const handleCalc = async () => {
@@ -295,7 +295,7 @@ export default function CalcPage() {
           {/* 직원/근무 */}
           <div className="pt-3 border-t border-border">
             <div className="grid grid-cols-3 gap-2">
-              {numInput('직원 수', empCount, setEmpCount, '명', 1)}
+              {numInput('직원 수', empCount, handleEmpChange, '명', 1)}
               {numInput('월 근무일', workDays, setWorkDays, '일', 1)}
               {numInput('일 근무시간', workHours, setWorkHours, '시간', 1)}
             </div>

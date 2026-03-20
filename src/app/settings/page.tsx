@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { RegionCode, REGION_LIST, REGION_COST_ADJUST } from '@/lib/regions';
 import { fmtComma, fmtKRW } from '@/lib/format';
+import { calcCostDefaults } from '@/lib/costDefaults';
 
 const BIZ_OPTIONS: { value: BizType; label: string }[] = [
   { value: 'beauty', label: '미용실/뷰티' },
@@ -18,16 +19,7 @@ const BIZ_OPTIONS: { value: BizType; label: string }[] = [
   { value: 'gig', label: '특수고용/플랫폼노동' },
 ];
 
-function calcCostDefaults(biz: BizType, region: RegionCode, revenue: number) {
-  const bm = BENCHMARKS[biz];
-  const adj = REGION_COST_ADJUST[region];
-  return {
-    costRent: Math.round(revenue * (bm.rent + (adj?.rent ?? 0)) / 100),
-    costLabor: Math.round(revenue * (bm.labor + (adj?.labor ?? 0)) / 100),
-    costMaterial: Math.round(revenue * (bm.material + (adj?.material ?? 0)) / 100),
-    costOther: Math.round(revenue * bm.other / 100),
-  };
-}
+// calcCostDefaults imported from @/lib/costDefaults
 
 export default function SettingsPage() {
   const [name, setName] = useState('');
@@ -50,10 +42,10 @@ export default function SettingsPage() {
   const [isKakaoUser, setIsKakaoUser] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  // 업종/지역 변경 시 비용 기본값 재계산
-  const applyDefaults = useCallback((biz: BizType, reg: RegionCode, rev: number) => {
+  // 업종/지역/직원수 변경 시 비용 기본값 재계산
+  const applyDefaults = useCallback((biz: BizType, rev: number, emp: number, reg?: RegionCode) => {
     if (!useCustomCost) {
-      const d = calcCostDefaults(biz, reg, rev);
+      const d = calcCostDefaults(biz, rev, emp, reg);
       setCostRent(d.costRent);
       setCostLabor(d.costLabor);
       setCostMaterial(d.costMaterial);
@@ -62,7 +54,7 @@ export default function SettingsPage() {
   }, [useCustomCost]);
 
   useEffect(() => {
-    const d = calcCostDefaults(bizType, region, avgRevenue);
+    const d = calcCostDefaults(bizType, avgRevenue, empCount, region);
     setCostRent(d.costRent);
     setCostLabor(d.costLabor);
     setCostMaterial(d.costMaterial);
@@ -99,17 +91,22 @@ export default function SettingsPage() {
 
   const handleBizChange = (newBiz: BizType) => {
     setBizType(newBiz);
-    applyDefaults(newBiz, region, avgRevenue);
+    applyDefaults(newBiz, avgRevenue, empCount, region);
   };
 
   const handleRegionChange = (newRegion: RegionCode) => {
     setRegion(newRegion);
-    applyDefaults(bizType, newRegion, avgRevenue);
+    applyDefaults(bizType, avgRevenue, empCount, newRegion);
   };
 
   const handleRevenueChange = (newRev: number) => {
     setAvgRevenue(newRev);
-    applyDefaults(bizType, region, newRev);
+    applyDefaults(bizType, newRev, empCount, region);
+  };
+
+  const handleEmpChange = (newEmp: number) => {
+    setEmpCount(newEmp);
+    applyDefaults(bizType, avgRevenue, newEmp, region);
   };
 
   const handleSave = useCallback(async () => {
@@ -312,7 +309,7 @@ export default function SettingsPage() {
               <div>
                 <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>직원 수</label>
                 <div className="flex items-center gap-1">
-                  <input type="number" value={empCount} onChange={(e) => setEmpCount(Number(e.target.value))}
+                  <input type="number" value={empCount} onChange={(e) => handleEmpChange(Number(e.target.value))}
                     className={`${inputClass} flex-1 min-w-0 text-right`} style={{ fontSize: '16px', minHeight: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }} />
                   <span className="text-sm shrink-0" style={{ color: 'var(--text-hint)', width: '28px' }}>명</span>
                 </div>
