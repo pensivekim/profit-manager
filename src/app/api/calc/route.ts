@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calcAll } from '@/lib/taxCalc';
 import { BizType } from '@/lib/benchmarks';
+import { RegionCode } from '@/lib/regions';
 
 export const runtime = 'edge';
 
@@ -19,6 +20,7 @@ export async function POST(req: NextRequest) {
       empCount: Number(body.empCount) || 0,
       workDays: Number(body.workDays) || 25,
       workHours: Number(body.workHours) || 10,
+      region: (body.region as RegionCode) || undefined,
     };
 
     if (params.revenue <= 0) {

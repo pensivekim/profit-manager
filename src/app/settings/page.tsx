@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
+import { RegionCode, REGION_LIST } from '@/lib/regions';
 
 const BIZ_OPTIONS: { value: BizType; label: string }[] = [
   { value: 'beauty', label: '미용실/뷰티' },
@@ -20,6 +21,7 @@ export default function SettingsPage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [bizType, setBizType] = useState<BizType>('restaurant');
+  const [region, setRegion] = useState<RegionCode>('daegu');
   const [taxType, setTaxType] = useState<'general' | 'simplified'>('general');
   const [empCount, setEmpCount] = useState(0);
   const [workDays, setWorkDays] = useState(25);
@@ -37,6 +39,7 @@ export default function SettingsPage() {
           setName(data.user.name || '');
           setPhone(data.user.phone || '');
           setBizType(data.user.biz_type || 'restaurant');
+          setRegion(data.user.region || 'daegu');
           setTaxType(data.user.tax_type || 'general');
           setEmpCount(data.user.emp_count || 0);
           setWorkDays(data.user.work_days || 25);
@@ -56,7 +59,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, name, phone: normalizedPhone, bizType, taxType, empCount, workDays, workHours }),
+        body: JSON.stringify({ userId, name, phone: normalizedPhone, bizType, region, taxType, empCount, workDays, workHours }),
       });
       const data = await res.json();
       if (data.success) {
@@ -70,7 +73,7 @@ export default function SettingsPage() {
     } finally {
       setLoading(false);
     }
-  }, [name, phone, bizType, taxType, empCount, workDays, workHours, existingUserId]);
+  }, [name, phone, bizType, region, taxType, empCount, workDays, workHours, existingUserId]);
 
   const inputClass = "w-full rounded-lg border border-border px-4 outline-none";
 
@@ -129,7 +132,15 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block font-semibold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>과세유형</label>
+            <label className="block font-semibold mb-1" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>{"\uD83D\uDCCD"} \uC0AC\uC5C5\uC7A5 \uC9C0\uC5ED</label>
+            <select value={region} onChange={(e) => setRegion(e.target.value as RegionCode)}
+              className={inputClass} style={{ fontSize: 'var(--font-size-base)', height: '48px', background: 'var(--bg-card)', color: 'var(--text-primary)' }}>
+              {REGION_LIST.map((r) => <option key={r.code} value={r.code}>{r.label}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-2" style={{ fontSize: 'var(--font-size-base)', color: 'var(--text-secondary)' }}>\uACFC\uC138\uC720\uD615</label>
             <div className="grid grid-cols-2 gap-2">
               {(['general', 'simplified'] as const).map((t) => (
                 <button key={t} onClick={() => setTaxType(t)}

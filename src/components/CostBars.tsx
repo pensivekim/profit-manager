@@ -2,6 +2,7 @@
 
 import { fmtPct, fmtKRW } from '@/lib/format';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
+import { RegionCode, REGION_COST_ADJUST, getRegionLabel } from '@/lib/regions';
 
 interface Props {
   bizType: BizType;
@@ -13,26 +14,43 @@ interface Props {
   costLabor: number;
   costMaterial: number;
   costOther: number;
+  region?: RegionCode;
 }
 
 const LABELS = [
-  { key: 'rent', label: '임대료', color: 'bg-blue-800' },
-  { key: 'labor', label: '인건비', color: 'bg-amber-500' },
-  { key: 'material', label: '재료/매입', color: 'bg-emerald-600' },
-  { key: 'other', label: '기타경비', color: 'bg-purple-500' },
+  { key: 'rent', label: '\uC784\uB300\uB8CC', color: 'bg-blue-800' },
+  { key: 'labor', label: '\uC778\uAC74\uBE44', color: 'bg-amber-500' },
+  { key: 'material', label: '\uC7AC\uB8CC/\uB9E4\uC785', color: 'bg-emerald-600' },
+  { key: 'other', label: '\uAE30\uD0C0\uACBD\uBE44', color: 'bg-purple-500' },
 ] as const;
 
 export default function CostBars(props: Props) {
   const bm = BENCHMARKS[props.bizType];
+  const adj = props.region ? REGION_COST_ADJUST[props.region] : null;
+  const adjustedBm = {
+    rent:     bm.rent     + (adj?.rent     ?? 0),
+    labor:    bm.labor    + (adj?.labor    ?? 0),
+    material: bm.material + (adj?.material ?? 0),
+    other:    bm.other,
+  };
+
   const pcts = { rent: props.rentPct, labor: props.laborPct, material: props.materialPct, other: props.otherPct };
   const costs = { rent: props.costRent, labor: props.costLabor, material: props.costMaterial, other: props.costOther };
-  const bmVals = { rent: bm.rent, labor: bm.labor, material: bm.material, other: bm.other };
+  const bmVals = { rent: adjustedBm.rent, labor: adjustedBm.labor, material: adjustedBm.material, other: adjustedBm.other };
+
+  const regionLabel = props.region ? getRegionLabel(props.region) : null;
+  const avgPrefix = regionLabel ? `${regionLabel} \uD3C9\uADE0` : '\uD3C9\uADE0';
 
   return (
     <div className="rounded-2xl p-5 shadow-sm border border-border" style={{ background: 'var(--bg-card)' }}>
-      <h3 className="font-bold mb-4" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
-        {"\uD83D\uDCCA"} 원가 구조 분석
+      <h3 className="font-bold mb-1" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', color: 'var(--text-primary)' }}>
+        {"\uD83D\uDCCA"} \uC6D0\uAC00 \uAD6C\uC870 \uBD84\uC11D
       </h3>
+      {regionLabel && (
+        <p className="mb-3" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-hint)' }}>
+          {regionLabel} \uAE30\uC900 \uBCA4\uCE58\uB9C8\uD06C \uC801\uC6A9
+        </p>
+      )}
       <div className="space-y-4">
         {LABELS.map(({ key, label, color }) => {
           const pct = pcts[key];
@@ -48,7 +66,7 @@ export default function CostBars(props: Props) {
                     {fmtPct(pct)}
                   </span>
                   <span className="text-sm" style={{ color: 'var(--text-hint)' }}>
-                    평균 {fmtPct(avg)}
+                    {avgPrefix} {fmtPct(avg)}
                     {over && ` (+${diff}%)`}
                   </span>
                 </span>

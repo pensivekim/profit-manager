@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma } from '@/lib/format';
+import { RegionCode, REGION_RENT_DANGER, getRegionLabel } from '@/lib/regions';
 
 export const runtime = 'edge';
 
@@ -11,7 +12,7 @@ const MIN_WAGE = 10030;
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { calcResult, bizType, taxType, revenue, empCount } = body;
+    const { calcResult, bizType, taxType, revenue, empCount, region } = body;
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -35,10 +36,16 @@ export async function POST(req: NextRequest) {
 - title은 반드시 10자 이내
 - body는 구체적 금액과 실천 방법 포함`;
 
-    const userPrompt = `## 사장님 정보
-- 업종: ${bm.name}
-- 과세유형: ${taxType === 'general' ? '일반과세자' : '간이과세자'}
-- 직원 수: ${empCount}명
+    const regionCode = region as RegionCode | undefined;
+    const regionLabel = regionCode ? getRegionLabel(regionCode) : '\uC804\uAD6D';
+    const rentDanger = regionCode ? REGION_RENT_DANGER[regionCode] : 20;
+
+    const userPrompt = `## \uC0AC\uC7A5\uB2D8 \uC815\uBCF4
+- \uC5C5\uC885: ${bm.name}
+- \uC0AC\uC5C5\uC7A5 \uC704\uCE58: ${regionLabel}
+- \uC774 \uC9C0\uC5ED \uC784\uB300\uB8CC \uC704\uD5D8 \uAE30\uC900: \uB9E4\uCD9C\uC758 ${rentDanger}%
+- \uACFC\uC138\uC720\uD615: ${taxType === 'general' ? '\uC77C\uBC18\uACFC\uC138\uC790' : '\uAC04\uC774\uACFC\uC138\uC790'}
+- \uC9C1\uC6D0 \uC218: ${empCount}\uBA85
 
 ## 월간 경영 숫자
 - 월 매출: ${fmtComma(revenue)}원

@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { userId, name, phone, bizType, taxType, empCount, workDays, workHours } = body;
+    const { userId, name, phone, bizType, region, taxType, empCount, workDays, workHours } = body;
 
     if (!userId || !phone) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -45,16 +45,16 @@ export async function POST(req: NextRequest) {
     const existing = await db.prepare('SELECT id FROM users WHERE id = ?').bind(userId).first();
     if (!existing) {
       await db.prepare(
-        `INSERT INTO users (id, name, phone, biz_type, tax_type, emp_count, work_days, work_hours)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO users (id, name, phone, biz_type, region, tax_type, emp_count, work_days, work_hours)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(userId, name || '', phone.replace(/-/g, ''), bizType || 'restaurant',
-        taxType || 'general', empCount || 0, workDays || 25, workHours || 10
+        region || 'daegu', taxType || 'general', empCount || 0, workDays || 25, workHours || 10
       ).run();
     } else {
       await db.prepare(
-        `UPDATE users SET name=?, phone=?, biz_type=?, tax_type=?, emp_count=?, work_days=?, work_hours=? WHERE id=?`
+        `UPDATE users SET name=?, phone=?, biz_type=?, region=?, tax_type=?, emp_count=?, work_days=?, work_hours=? WHERE id=?`
       ).bind(name || '', phone.replace(/-/g, ''), bizType || 'restaurant',
-        taxType || 'general', empCount || 0, workDays || 25, workHours || 10, userId
+        region || 'daegu', taxType || 'general', empCount || 0, workDays || 25, workHours || 10, userId
       ).run();
     }
 

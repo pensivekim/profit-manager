@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { BENCHMARKS, BizType } from '@/lib/benchmarks';
 import { fmtComma, fmtKRW } from '@/lib/format';
+import { RegionCode, REGION_LIST, REGION_COST_ADJUST, getRegionLabel } from '@/lib/regions';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import ResultSummary from '@/components/ResultSummary';
@@ -40,22 +41,27 @@ interface CalcResult {
   laborPct: number;
   materialPct: number;
   otherPct: number;
-  [key: string]: number;
+  adjustedBm: { rent: number; labor: number; material: number; other: number };
+  rentDangerThreshold: number;
+  isRentDanger: boolean;
+  [key: string]: number | boolean | { rent: number; labor: number; material: number; other: number };
 }
 
-function calcDefaults(biz: BizType, rev: number) {
+function calcDefaults(biz: BizType, rev: number, region?: RegionCode) {
   const bm = BENCHMARKS[biz];
+  const adj = region ? REGION_COST_ADJUST[region] : null;
   return {
-    costRent: Math.round(rev * bm.rent / 100),
-    costLabor: Math.round(rev * bm.labor / 100),
-    costMaterial: Math.round(rev * bm.material / 100),
+    costRent: Math.round(rev * (bm.rent + (adj?.rent ?? 0)) / 100),
+    costLabor: Math.round(rev * (bm.labor + (adj?.labor ?? 0)) / 100),
+    costMaterial: Math.round(rev * (bm.material + (adj?.material ?? 0)) / 100),
     costOther: Math.round(rev * bm.other / 100),
   };
 }
 
 const initBiz: BizType = 'restaurant';
 const initRev = 20000000;
-const initDefaults = calcDefaults(initBiz, initRev);
+const initRegion: RegionCode = 'daegu';
+const initDefaults = calcDefaults(initBiz, initRev, initRegion);
 
 export default function CalcPage() {
   const [bizType, setBizType] = useState<BizType>(initBiz);
@@ -68,6 +74,7 @@ export default function CalcPage() {
   const [empCount, setEmpCount] = useState(1);
   const [workDays, setWorkDays] = useState(25);
   const [workHours, setWorkHours] = useState(10);
+  const [region, setRegion] = useState<RegionCode>(initRegion);
   const [result, setResult] = useState<CalcResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [showAI, setShowAI] = useState(false);
@@ -79,8 +86,8 @@ export default function CalcPage() {
 
   const bm = BENCHMARKS[bizType];
 
-  const applyDefaults = useCallback((biz: BizType, rev: number) => {
-    const d = calcDefaults(biz, rev);
+  const applyDefaults = useCallback((biz: BizType, rev: number, reg?: RegionCode) => {
+    const d = calcDefaults(biz, rev, reg);
     setCostRent(d.costRent);
     setCostLabor(d.costLabor);
     setCostMaterial(d.costMaterial);
@@ -89,12 +96,17 @@ export default function CalcPage() {
 
   const handleBizChange = (newBiz: BizType) => {
     setBizType(newBiz);
-    applyDefaults(newBiz, revenue);
+    applyDefaults(newBiz, revenue, region);
   };
 
   const handleRevenueChange = (newRev: number) => {
     setRevenue(newRev);
-    applyDefaults(bizType, newRev);
+    applyDefaults(bizType, newRev, region);
+  };
+
+  const handleRegionChange = (newRegion: RegionCode) => {
+    setRegion(newRegion);
+    applyDefaults(bizType, revenue, newRegion);
   };
 
   const handleCalc = async () => {
@@ -106,7 +118,7 @@ export default function CalcPage() {
         body: JSON.stringify({
           bizType, taxType, revenue,
           costRent, costLabor, costMaterial, costOther,
-          empCount, workDays, workHours,
+          empCount, workDays, workHours, region,
         }),
       });
       const data = await res.json();
@@ -229,6 +241,21 @@ export default function CalcPage() {
             </select>
           </div>
 
+          {/* 지역 */}
+          <div>
+            <label className="block text-base font-semibold mb-1" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>{"\uD83D\uDCCD"} \uC0AC\uC5C5\uC7A5 \uC9C0\uC5ED</label>
+            <select
+              value={region}
+              onChange={(e) => handleRegionChange(e.target.value as RegionCode)}
+              className="w-full rounded-lg border border-border px-4 py-3 text-base outline-none"
+              style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
+            >
+              {REGION_LIST.map((r) => (
+                <option key={r.code} value={r.code}>{r.label}</option>
+              ))}
+            </select>
+          </div>
+
           {/* 과세유형 */}
           <div>
             <label className="block text-base font-semibold mb-2" style={{ lineHeight: 'var(--line-height)', color: 'var(--text-secondary)' }}>과세유형</label>
@@ -301,6 +328,17 @@ export default function CalcPage() {
               taxType={taxType}
               empCount={empCount}
             />
+            {result.isRentDanger && (
+              <div className="rounded-xl p-4" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
+                <p className="font-bold text-red-600" style={{ fontSize: 'var(--font-size-base)', lineHeight: 'var(--line-height)' }}>
+                  {"\uD83D\uDEA8"} \uC784\uB300\uB8CC\uAC00 {getRegionLabel(region)} \uAE30\uC900 \uD3C9\uADE0\uBCF4\uB2E4 {result.rentPct - result.rentDangerThreshold}%p \uB192\uC2B5\uB2C8\uB2E4
+                </p>
+                <p className="text-red-500 mt-1" style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height)' }}>
+                  {getRegionLabel(region)} \uC704\uD5D8 \uAE30\uC900: \uB9E4\uCD9C\uC758 {result.rentDangerThreshold}% | \uD604\uC7AC: {result.rentPct}%
+                </p>
+              </div>
+            )}
+
             <CostBars
               bizType={bizType}
               rentPct={result.rentPct}
@@ -311,6 +349,7 @@ export default function CalcPage() {
               costLabor={costLabor}
               costMaterial={costMaterial}
               costOther={costOther}
+              region={region}
             />
 
             <div className="grid grid-cols-2 gap-3">
@@ -340,6 +379,7 @@ export default function CalcPage() {
                 taxType={taxType}
                 revenue={revenue}
                 empCount={empCount}
+                region={region}
                 autoFetch={showAI}
                 onProLink={() => {
                   const el = document.getElementById('pro-section');

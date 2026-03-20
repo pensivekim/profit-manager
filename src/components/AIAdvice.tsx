@@ -10,11 +10,12 @@ interface Advice {
 }
 
 interface Props {
-  calcResult: Record<string, number>;
+  calcResult: Record<string, unknown>;
   bizType: string;
   taxType: string;
   revenue: number;
   empCount: number;
+  region?: string;
   autoFetch: boolean;
   onProLink?: (tab: string) => void;
 }
@@ -32,7 +33,7 @@ const PRO_LABELS: Record<string, string> = {
   legal: '변호사 연결',
 };
 
-export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCount, autoFetch, onProLink }: Props) {
+export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCount, region, autoFetch, onProLink }: Props) {
   const [advices, setAdvices] = useState<Advice[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -45,7 +46,7 @@ export default function AIAdvice({ calcResult, bizType, taxType, revenue, empCou
       const res = await fetch('/api/advice', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ calcResult, bizType, taxType, revenue, empCount }),
+        body: JSON.stringify({ calcResult, bizType, taxType, revenue, empCount, region }),
       });
       const data = await res.json();
       if (data.error) {
