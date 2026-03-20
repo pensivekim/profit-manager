@@ -22,13 +22,20 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: "https://pro.genomic.cc",
     siteName: "사장님경영파트너",
-    title: "열심히 일했는데, 왜 통장엔 없지? — 사장님경영파트너",
-    description: "세금 다 빼고 진짜 내 손에 남는 돈을 확인하세요. 무료 AI 경영 조언 포함.",
+    title: "열심히 일했는데, 왜 통장엔 없지?",
+    description: "세금 다 빼고 진짜 내 손에 남는 돈을 확인하세요. KBS비즈니스와 함께하는 소상공인 무료 경영파트너.",
+    images: [{
+      url: "https://pro.genomic.cc/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "사장님경영파트너 — KBS비즈니스와 함께",
+    }],
   },
   twitter: {
     card: "summary_large_image",
     title: "열심히 일했는데, 왜 통장엔 없지?",
-    description: "세금 다 빼고 진짜 내 손에 남는 돈을 확인하세요.",
+    description: "세금 다 빼고 진짜 내 손에 남는 돈을 확인하세요. KBS비즈니스와 함께하는 소상공인 무료 경영파트너.",
+    images: ["https://pro.genomic.cc/og-image.png"],
   },
   alternates: {
     canonical: "https://pro.genomic.cc",
