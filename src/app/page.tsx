@@ -6,11 +6,32 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen" style={{ background: '#F5F0E8' }}>
 
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "사장님경영파트너",
+          "url": "https://pro.genomic.cc",
+          "description": "소상공인 실수령액 계산 및 AI 경영 조언 서비스",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+          "provider": { "@type": "Organization", "name": "주식회사 제노믹", "url": "https://genomic.cc" }
+        })}}
+      />
+
       {/* [1] 헤더 */}
       <header className="flex items-center justify-between px-4 py-4 max-w-lg mx-auto">
-        <span className="font-bold" style={{ fontSize: '18px', color: '#2D3748' }}>
-          {"\uD83D\uDD25"} 경영파트너
-        </span>
+        <div>
+          <span className="font-bold block" style={{ fontSize: '18px', color: '#2D3748' }}>
+            KBS비즈니스
+          </span>
+          <span style={{ fontSize: '11px', color: '#9A9690' }}>
+            소상공인 분들과 함께 합니다.
+          </span>
+        </div>
         <Link href="/login"
           className="font-semibold px-5 py-2 rounded-lg text-white"
           style={{ fontSize: '14px', background: '#2D5A8E' }}>
@@ -33,8 +54,11 @@ export default function LandingPage() {
           style={{ background: '#FEE500', color: '#191919', fontSize: '18px', height: '56px', lineHeight: '56px' }}>
           {"\uD83D\uDCAC"} 카카오로 무료 시작하기
         </a>
-        <p className="mt-3" style={{ fontSize: '13px', color: '#9A9690' }}>
+        <p className="mt-2" style={{ fontSize: '13px', color: '#9A9690' }}>
           가입 30초 · 완전 무료 · 카드 불필요
+        </p>
+        <p style={{ fontSize: '12px', color: '#9A9690', marginTop: '8px', lineHeight: '1.6' }}>
+          {"\uD83D\uDD12"} 입력하신 데이터는 외부에 유출되거나 공유되지 않습니다.
         </p>
       </section>
 
@@ -45,34 +69,16 @@ export default function LandingPage() {
         </h2>
         <div className="space-y-3">
           {[
-            {
-              emoji: '\uD83D\uDE24',
-              title: '이번 달도 바빴는데 왜 이러지?',
-              desc: '매출은 올랐는데 수중에 남는 게 없어요',
-            },
-            {
-              emoji: '\uD83D\uDE30',
-              title: '세금 낼 때마다 깜짝 놀란다',
-              desc: '부가세, 소득세... 미리 알았으면 준비했을 텐데',
-            },
-            {
-              emoji: '\uD83D\uDE13',
-              title: '직원 월급 주고 나면 내 몫이 없다',
-              desc: '나는 사장인지 직원인지 모르겠어요',
-            },
+            { emoji: '\uD83D\uDE24', title: '이번 달도 바빴는데 왜 이러지?', desc: '매출은 올랐는데 수중에 남는 게 없어요' },
+            { emoji: '\uD83D\uDE30', title: '세금 낼 때마다 깜짝 놀란다', desc: '부가세, 소득세... 미리 알았으면 준비했을 텐데' },
+            { emoji: '\uD83D\uDE13', title: '직원 월급 주고 나면 내 몫이 없다', desc: '나는 사장인지 직원인지 모르겠어요' },
           ].map((item) => (
-            <div key={item.title}
-              className="rounded-2xl p-5 border"
-              style={{ background: '#FFFDF7', borderColor: '#E8E3DA' }}>
+            <div key={item.title} className="rounded-2xl p-5 border" style={{ background: '#FFFDF7', borderColor: '#E8E3DA' }}>
               <div className="flex items-start gap-3">
                 <span className="text-2xl shrink-0">{item.emoji}</span>
                 <div>
-                  <p className="font-bold" style={{ fontSize: '17px', color: '#1A1A1A', lineHeight: '1.5' }}>
-                    {item.title}
-                  </p>
-                  <p className="mt-1" style={{ fontSize: '15px', color: '#6B6B6B', lineHeight: '1.7' }}>
-                    {item.desc}
-                  </p>
+                  <p className="font-bold" style={{ fontSize: '17px', color: '#1A1A1A', lineHeight: '1.5' }}>{item.title}</p>
+                  <p className="mt-1" style={{ fontSize: '15px', color: '#6B6B6B', lineHeight: '1.7' }}>{item.desc}</p>
                 </div>
               </div>
             </div>
@@ -87,37 +93,15 @@ export default function LandingPage() {
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {[
-            {
-              emoji: '\uD83E\uDDEE',
-              title: '진짜 실수령액',
-              desc: '세금·보험·수수료 다 빼고\n내 손에 얼마 남는지',
-            },
-            {
-              emoji: '\uD83D\uDCCA',
-              title: '지역별 업종 평균 비교',
-              desc: '대구 식당 평균이랑\n내 가게가 어떻게 다른지',
-            },
-            {
-              emoji: '\uD83E\uDD16',
-              title: 'AI 경영 조언',
-              desc: '재료비가 왜 높은지,\n어떻게 줄일 수 있는지',
-            },
-            {
-              emoji: '\uD83D\uDC64',
-              title: '전문가 바로 연결',
-              desc: '세무사·노무사에게\n내 데이터로 바로 상담',
-            },
+            { emoji: '\uD83E\uDDEE', title: '진짜 실수령액', desc: '세금·보험·수수료 다 빼고\n내 손에 얼마 남는지' },
+            { emoji: '\uD83D\uDCCA', title: '지역별 업종 평균 비교', desc: '대구 식당 평균이랑\n내 가게가 어떻게 다른지' },
+            { emoji: '\uD83E\uDD16', title: 'AI 경영 조언', desc: '재료비가 왜 높은지,\n어떻게 줄일 수 있는지' },
+            { emoji: '\uD83D\uDC64', title: '전문가 바로 연결', desc: '세무사·노무사에게\n내 데이터로 바로 상담' },
           ].map((item) => (
-            <div key={item.title}
-              className="rounded-2xl p-5 border"
-              style={{ background: '#FFFDF7', borderColor: '#E8E3DA' }}>
+            <div key={item.title} className="rounded-2xl p-5 border" style={{ background: '#FFFDF7', borderColor: '#E8E3DA' }}>
               <span className="text-2xl block mb-2">{item.emoji}</span>
-              <p className="font-bold" style={{ fontSize: '16px', color: '#1A1A1A', lineHeight: '1.4' }}>
-                {item.title}
-              </p>
-              <p className="mt-1 whitespace-pre-line" style={{ fontSize: '14px', color: '#6B6B6B', lineHeight: '1.7' }}>
-                {item.desc}
-              </p>
+              <p className="font-bold" style={{ fontSize: '16px', color: '#1A1A1A', lineHeight: '1.4' }}>{item.title}</p>
+              <p className="mt-1 whitespace-pre-line" style={{ fontSize: '14px', color: '#6B6B6B', lineHeight: '1.7' }}>{item.desc}</p>
             </div>
           ))}
         </div>
@@ -140,13 +124,9 @@ export default function LandingPage() {
             { emoji: '\uD83D\uDD27', label: '제조/공방' },
             { emoji: '\uD83D\uDCDA', label: '학원/서비스' },
           ].map((item) => (
-            <div key={item.label}
-              className="rounded-xl py-3 text-center border"
-              style={{ background: '#FFFDF7', borderColor: '#E8E3DA' }}>
+            <div key={item.label} className="rounded-xl py-3 text-center border" style={{ background: '#FFFDF7', borderColor: '#E8E3DA' }}>
               <span className="text-xl block">{item.emoji}</span>
-              <span className="mt-1 block font-medium" style={{ fontSize: '13px', color: '#4A4A4A' }}>
-                {item.label}
-              </span>
+              <span className="mt-1 block font-medium" style={{ fontSize: '13px', color: '#4A4A4A' }}>{item.label}</span>
             </div>
           ))}
         </div>
@@ -157,6 +137,7 @@ export default function LandingPage() {
         <p style={{ fontSize: '13px', color: '#5F5E5A', marginBottom: '12px' }}>
           KBS비즈니스가 소상공인 분들과 함께 합니다.
         </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="https://i.namu.wiki/i/vigPtU4k4pvRqXkyv_DpcJJ7tlxTRBpGfnDB2eU5JYIvZ_gRqwJ8NTQRRfpy7bY1vao1L_CCt3yyB7-460mv9FZdE951vAEeE-BX6bDqGRY3RrsBr2IZC4jDUsc2Kc4JVVWRD7l-eT3bCrwCdAy_gA.svg"
           alt="KBS비즈니스"
@@ -182,9 +163,16 @@ export default function LandingPage() {
       {/* [7] 푸터 */}
       <footer className="max-w-lg mx-auto px-4 py-8 text-center" style={{ background: '#F5F0E8' }}>
         <p style={{ fontSize: '13px', color: '#9A9690', lineHeight: '1.8' }}>
-          &copy; 2026 사장님경영파트너 · 주식회사 제노믹<br />
-          pro.genomic.cc
+          &copy; 2026 사장님경영파트너 · 주식회사 제노믹
         </p>
+        <div style={{ marginTop: '8px', fontSize: '12px' }}>
+          <Link href="/terms" style={{ color: '#9A9690' }}>이용약관</Link>
+          <span style={{ color: '#CCC' }}> · </span>
+          <Link href="/privacy" style={{ color: '#9A9690' }}>개인정보처리방침</Link>
+          <span style={{ color: '#CCC' }}> · </span>
+          <a href="mailto:pensive.kim@gmail.com" style={{ color: '#9A9690' }}>문의하기</a>
+        </div>
+        <p className="mt-2" style={{ fontSize: '11px', color: '#C0BBB3' }}>pro.genomic.cc</p>
       </footer>
     </div>
   );
