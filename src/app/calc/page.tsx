@@ -315,6 +315,23 @@ export default function CalcPage() {
         {/* Results */}
         {result && (
           <div className="mt-6 space-y-4">
+            {!user ? (
+              <div className="rounded-xl px-4 py-3 flex items-start gap-2" style={{ background: 'rgba(45,90,142,0.08)', border: '1px solid rgba(45,90,142,0.15)' }}>
+                <span style={{ fontSize: '16px' }}>{"\uD83D\uDCCC"}</span>
+                <p style={{ fontSize: '14px', color: '#2D5A8E', lineHeight: '1.6' }}>
+                  업종 평균 기준 계산입니다.{' '}
+                  <Link href="/login" className="font-bold underline">로그인 후 내 비용 입력하기</Link>
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-xl px-4 py-3 flex items-center gap-2" style={{ background: 'rgba(46,125,79,0.08)', border: '1px solid rgba(46,125,79,0.15)' }}>
+                <span style={{ fontSize: '16px' }}>{"\u2705"}</span>
+                <p style={{ fontSize: '14px', color: '#2E7D4F', lineHeight: '1.6' }}>
+                  내 고정비용 기준으로 계산되었습니다.{' '}
+                  <Link href="/settings" className="font-semibold underline">비용 수정</Link>
+                </p>
+              </div>
+            )}
             <ResultSummary
               finalProfit={result.finalProfit}
               hourlyWage={result.hourlyWage}

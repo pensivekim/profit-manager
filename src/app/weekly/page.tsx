@@ -23,6 +23,7 @@ interface WeeklyResult {
   aiComment: string;
   diff: string;
   userName: string;
+  costBasis?: 'custom' | 'average';
 }
 
 export default function WeeklyPage() {
@@ -124,6 +125,24 @@ export default function WeeklyPage() {
               <span>{result.diff}</span>
             </div>
           </div>
+
+          {/* 계산 기준 안내 */}
+          {result.costBasis === 'custom' ? (
+            <div className="rounded-xl px-4 py-3 flex items-center gap-2 mb-4" style={{ background: 'rgba(46,125,79,0.08)', border: '1px solid rgba(46,125,79,0.15)' }}>
+              <span style={{ fontSize: '14px' }}>{"\u2705"}</span>
+              <p style={{ fontSize: '13px', color: '#2E7D4F', lineHeight: '1.5' }}>
+                내 고정비용 기준 계산
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-xl px-4 py-3 flex items-start gap-2 mb-4" style={{ background: 'rgba(45,90,142,0.08)', border: '1px solid rgba(45,90,142,0.15)' }}>
+              <span style={{ fontSize: '14px' }}>{"\uD83D\uDCCC"}</span>
+              <p style={{ fontSize: '13px', color: '#2D5A8E', lineHeight: '1.5' }}>
+                업종 평균 기준 계산입니다.{' '}
+                <Link href="/settings" className="font-bold underline">내 비용 입력하면 더 정확해요</Link>
+              </p>
+            </div>
+          )}
 
           {/* 버튼 */}
           <div className="space-y-3">

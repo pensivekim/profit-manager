@@ -156,6 +156,10 @@ export async function POST(req: NextRequest) {
       ).run();
     }
 
+    const usedCustomCost = !!(costRent || costLabor || costMaterial || costOther) &&
+      (costRent !== Math.round(rev * bm.rent / 100) ||
+       costLabor !== Math.round(rev * bm.labor / 100));
+
     return NextResponse.json({
       success: true,
       finalProfit: result.finalProfit,
@@ -164,6 +168,7 @@ export async function POST(req: NextRequest) {
       diff: diffStr,
       prevProfit,
       userName,
+      costBasis: usedCustomCost ? 'custom' : 'average',
     });
   } catch (err) {
     console.error('Weekly API error:', err);
