@@ -99,15 +99,25 @@ export async function POST(req: NextRequest) {
         workDays = (user.work_days as number) || 25;
         workHours = (user.work_hours as number) || 10;
         userName = (user.name as string) || '사장';
+        // 사용자가 저장한 고정비용 사용
+        if (user.cost_rent || user.cost_labor || user.cost_material || user.cost_other) {
+          costRent = (user.cost_rent as number) || 0;
+          costLabor = (user.cost_labor as number) || 0;
+          costMaterial = (user.cost_material as number) || 0;
+          costOther = (user.cost_other as number) || 0;
+        }
       }
     }
 
     const bm = BENCHMARKS[bizType];
     const rev = Number(revenue);
-    costRent = Math.round(rev * bm.rent / 100);
-    costLabor = Math.round(rev * bm.labor / 100);
-    costMaterial = Math.round(rev * bm.material / 100);
-    costOther = Math.round(rev * bm.other / 100);
+    // 사용자 고정비용이 없으면 업종 평균으로 계산
+    if (costRent === 0 && costLabor === 0 && costMaterial === 0 && costOther === 0) {
+      costRent = Math.round(rev * bm.rent / 100);
+      costLabor = Math.round(rev * bm.labor / 100);
+      costMaterial = Math.round(rev * bm.material / 100);
+      costOther = Math.round(rev * bm.other / 100);
+    }
 
     const result = calcAll({
       bizType, taxType: taxType as 'general' | 'simplified',
