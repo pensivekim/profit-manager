@@ -115,7 +115,7 @@ export default function LandingPage() {
             { emoji: '\uD83E\uDDEE', title: '진짜 남은 돈', desc: '세금·보험·수수료 다 빼고\n내 손에 얼마 남는지' },
             { emoji: '\uD83D\uDCCA', title: '지역별 업종 평균 비교', desc: '우리 동네 식당 평균이랑\n내 가게가 어떻게 다른지' },
             { emoji: '\uD83E\uDD16', title: 'AI 경영 조언', desc: '재료비가 왜 높은지,\n어떻게 줄일 수 있는지' },
-            { emoji: '\uD83D\uDC64', title: '전문가 바로 연결', desc: '세무사·노무사에게\n내 데이터로 바로 상담' },
+            { emoji: '\uD83D\uDCE2', title: '최신 혜택·블로그 글감', desc: '지원금·마케팅 아이디어·\n블로그 주제까지 한번에' },
           ].map((item) => (
             <div key={item.title} className="rounded-2xl p-5 md:p-6 border" style={{ background: '#FFFDF7', borderColor: '#E8E3DA' }}>
               <span className="text-2xl md:text-3xl block mb-2">{item.emoji}</span>

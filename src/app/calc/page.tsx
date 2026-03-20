@@ -11,9 +11,9 @@ import Header from '@/components/Header';
 import ResultSummary from '@/components/ResultSummary';
 import CostBars from '@/components/CostBars';
 import TaxDetail from '@/components/TaxDetail';
-import ProCards from '@/components/ProCards';
+import LocalTrends from '@/components/LocalTrends';
 import AIAdvice from '@/components/AIAdvice';
-import ConsultModal from '@/components/ConsultModal';
+// ConsultModal removed — replaced by LocalTrends
 
 const BIZ_OPTIONS: { value: BizType; label: string }[] = [
   { value: 'beauty', label: '미용실/뷰티' },
@@ -73,7 +73,7 @@ export default function CalcPage() {
   const [result, setResult] = useState<CalcResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [showAI, setShowAI] = useState(false);
-  const [consultModal, setConsultModal] = useState<{ proType: string; proLabel: string } | null>(null);
+  const [showTrends, setShowTrends] = useState(false);
   const { user } = useAuth();
 
   // 포커스 상태 추적 (콤마 포맷용)
@@ -381,14 +381,11 @@ export default function CalcPage() {
                 {"\uD83E\uDD16"} AI 경영 조언
               </button>
               <button
-                onClick={() => {
-                  const el = document.getElementById('pro-section');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={() => setShowTrends(true)}
                 className="py-4 rounded-xl font-bold text-base border-2 transition-colors"
-                style={{ minHeight: '48px', lineHeight: 'var(--line-height)', color: 'var(--accent)', borderColor: 'var(--accent)' }}
+                style={{ minHeight: '48px', lineHeight: 'var(--line-height)', color: '#E8920D', borderColor: '#E8920D' }}
               >
-                {"\uD83D\uDC64"} 전문가 연결
+                {"\uD83D\uDCE2"} 최신 혜택/글감
               </button>
             </div>
 
@@ -408,17 +405,14 @@ export default function CalcPage() {
               />
             )}
 
-            <div id="pro-section">
-              <ProCards
-                monthlyIncomeTax={result.monthlyIncomeTax}
-                vatProvision={result.vatProvision}
-                empCount={empCount}
-                insuranceCost={result.insuranceCost}
-                finalProfit={result.finalProfit}
-                rentPct={result.rentPct}
-                onConsult={(proType, proLabel) => setConsultModal({ proType, proLabel })}
+            {showTrends && (
+              <LocalTrends
+                bizType={bizType}
+                region={region}
+                revenue={revenue}
+                autoFetch={showTrends}
               />
-            </div>
+            )}
 
             {/* 로그인 유도 */}
             {!user && (
@@ -447,14 +441,6 @@ export default function CalcPage() {
         </p>
       </div>
 
-      {consultModal && (
-        <ConsultModal
-          proType={consultModal.proType}
-          proLabel={consultModal.proLabel}
-          recordSnapshot={result ? { ...result, revenue, bizType, taxType } : undefined}
-          onClose={() => setConsultModal(null)}
-        />
-      )}
     </div>
   );
 }
