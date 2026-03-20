@@ -21,24 +21,37 @@ export async function POST(req: NextRequest) {
     const regionLabel = region ? getRegionLabel(region as RegionCode) : '전국';
     const revMan = Math.round((revenue || 20000000) / 10000);
 
-    const prompt = `당신은 소상공인을 돕는 경영 컨설턴트입니다.
-아래 사장님의 업종과 지역에 맞는 최신 정보를 제공해주세요.
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const season = month <= 2 || month === 12 ? '겨울' : month <= 5 ? '봄' : month <= 8 ? '여름' : '가을';
 
-사장님 정보:
-- 업종: ${bm.name}
-- 지역: ${regionLabel}
-- 월 매출: 약 ${revMan}만원
+    const prompt = `당신은 ${bm.name} 업종에서 10년 경력의 마케팅 전문가입니다.
+${regionLabel}에서 월 ${revMan}만원 매출을 올리는 사장님에게 지금 당장 실행할 수 있는 구체적 조언을 해주세요.
 
-아래 3가지 카테고리에서 각각 1~2개씩, 총 4~5개 항목을 알려주세요:
+현재: 2026년 ${month}월, ${season}
 
-1. 정부/지자체 지원금/혜택 (2026년 현재 신청 가능한 것)
-2. 지역 마케팅 아이디어 (${regionLabel} 지역 트렌드, 무료 시음/시식, 콜라보, SNS 팁)
-3. 블로그 글감 추천 (고객 유입에 도움되는 키워드 포함)
+## 규칙
+- 뻔한 말("SNS를 활용하세요", "블로그를 쓰세요") 금지
+- 사장님이 오늘 바로 실행할 수 있는 구체적 액션만
+- 실제 성공 사례나 구체적 숫자 포함
+- ${regionLabel} 지역 특성 반영 필수
 
-반드시 아래 JSON 형식으로만 응답하세요. JSON 외에 다른 텍스트를 절대 포함하지 마세요:
-{"items":[{"type":"subsidy","icon":"📢","title":"제목","body":"내용","link":""},{"type":"marketing","icon":"💡","title":"제목","body":"내용","link":""},{"type":"blog","icon":"✍️","title":"제목","body":"내용","link":""}]}
+## 요청 항목 (총 5개)
 
-type은 subsidy, marketing, blog 중 하나입니다.`;
+1. 지원금 1개: 2026년 ${month}월 현재 ${regionLabel} ${bm.name}이 신청 가능한 정부/지자체 지원금. 금액, 신청처, 마감일 포함.
+
+2. 마케팅 액션 2개:
+   - 돈 안 드는 것 1개: 오늘 당장 할 수 있는 것. 예) "네이버 플레이스 리뷰 이벤트: 리뷰 남기면 음료 1잔 무료. 실제로 대구 OO식당은 이걸로 월 리뷰 50개→200개로 늘림"
+   - 소액 투자(10만원 이내) 1개: 예) "${season} 시즌 한정 메뉴 출시 + 인스타 릴스 촬영. 촬영비 0원, 재료비 5만원으로 신규 고객 유입"
+
+3. 블로그 글 제목 2개:
+   - 네이버 검색 상위 노출될 수 있는 실제 블로그 글 제목
+   - 제목에 지역명+업종 키워드 포함
+   - 글의 목차(3~4개)까지 제안
+   - 예) 제목: "${regionLabel} 직장인 점심 맛집 BEST 5 (2026년 ${month}월)" / 목차: 1) 가성비 끝판왕 OO 2) 혼밥 성지 OO 3) ...
+
+JSON 형식으로만 응답. 다른 텍스트 없이:
+{"items":[{"type":"subsidy","icon":"📢","title":"20자이내","body":"3~4문장 구체적 내용"},{"type":"marketing","icon":"💡","title":"20자이내","body":"3~4문장"},{"type":"marketing","icon":"💡","title":"20자이내","body":"3~4문장"},{"type":"blog","icon":"✍️","title":"블로그 글 제목","body":"목차와 기대 효과"},{"type":"blog","icon":"✍️","title":"블로그 글 제목","body":"목차와 기대 효과"}]}`;
 
     const endpoint = `${GATEWAY_BASE}/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
 
