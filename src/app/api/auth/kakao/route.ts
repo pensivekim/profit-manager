@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
+const REDIRECT_URI = 'https://pro.genomic.cc/api/auth/kakao/callback';
+
 export async function GET(req: NextRequest) {
   const clientId = process.env.KAKAO_REST_API_KEY;
   if (!clientId) {
@@ -9,8 +11,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const redirectUri = new URL('/api/auth/kakao/callback', req.url).toString();
-  const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
+  const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code`;
 
   return NextResponse.redirect(url);
 }
