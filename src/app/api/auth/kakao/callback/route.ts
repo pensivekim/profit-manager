@@ -12,20 +12,25 @@ type D1DB = {
   };
 };
 
+function redirect(req: NextRequest, path: string) {
+  const url = new URL(path, req.url);
+  return NextResponse.redirect(url);
+}
+
 export async function GET(req: NextRequest) {
   try {
     const code = req.nextUrl.searchParams.get('code');
     if (!code) {
-      return NextResponse.redirect('https://pro.genomic.cc/login?error=no_code');
+      return redirect(req, '/login?error=no_code');
     }
 
     const env = process.env as Record<string, unknown>;
     const clientId = env.KAKAO_REST_API_KEY as string;
     const clientSecret = env.KAKAO_CLIENT_SECRET as string;
-    const redirectUri = 'https://pro.genomic.cc/api/auth/kakao/callback';
+    const redirectUri = new URL('/api/auth/kakao/callback', req.url).toString();
 
     if (!clientId) {
-      return NextResponse.redirect('https://pro.genomic.cc/login?error=config');
+      return redirect(req, '/login?error=config');
     }
 
     // 1. code → access_token 교환
@@ -46,8 +51,9 @@ export async function GET(req: NextRequest) {
     });
 
     if (!tokenRes.ok) {
-      console.error('Kakao token error:', await tokenRes.text());
-      return NextResponse.redirect('https://pro.genomic.cc/login?error=token');
+      const errText = await tokenRes.text();
+      console.error('Kakao token error:', errText);
+      return redirect(req, `/login?error=token&detail=${encodeURIComponent(errText.slice(0, 100))}`);
     }
 
     const tokenData = await tokenRes.json();
@@ -60,7 +66,7 @@ export async function GET(req: NextRequest) {
 
     if (!userRes.ok) {
       console.error('Kakao user info error:', await userRes.text());
-      return NextResponse.redirect('https://pro.genomic.cc/login?error=user_info');
+      return redirect(req, '/login?error=user_info');
     }
 
     const userData = await userRes.json();
@@ -70,7 +76,7 @@ export async function GET(req: NextRequest) {
     // 3. D1에서 kakao_id로 사용자 조회/생성
     const db = env.DB as D1DB | undefined;
     if (!db) {
-      return NextResponse.redirect('https://pro.genomic.cc/login?error=db');
+      return redirect(req, '/login?error=db');
     }
 
     let userId: string;
@@ -95,11 +101,10 @@ export async function GET(req: NextRequest) {
 
     // 5. 프론트로 리다이렉트
     const dest = isNew ? 'settings' : 'calc';
-    return NextResponse.redirect(
-      `https://pro.genomic.cc/auth/callback?token=${jwt}&userId=${encodeURIComponent(userId)}&dest=${dest}`
-    );
+    return redirect(req, `/auth/callback?token=${jwt}&userId=${encodeURIComponent(userId)}&dest=${dest}`);
   } catch (err) {
     console.error('Kakao callback error:', err);
-    return NextResponse.redirect('https://pro.genomic.cc/login?error=server');
+    const msg = err instanceof Error ? err.message : 'unknown';
+    return redirect(req, `/login?error=server&detail=${encodeURIComponent(msg.slice(0, 100))}`);
   }
 }
