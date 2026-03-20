@@ -32,7 +32,7 @@ export default function LandingPage() {
             style={{ objectFit: 'contain' }}
           />
           <span className="block font-semibold" style={{ fontSize: '15px', color: '#4A4A4A', marginTop: '2px' }}>
-            소상공인 분들과 함께 합니다.
+            소상공인 사장님과 함께 합니다.
           </span>
         </div>
         <Link href="/login"
