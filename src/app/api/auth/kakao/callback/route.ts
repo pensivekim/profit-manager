@@ -91,7 +91,7 @@ export async function GET(req: NextRequest) {
     } else {
       userId = `kakao-${kakaoId}`;
       await db.prepare(
-        `INSERT INTO users (id, kakao_id, nickname, name, plan) VALUES (?, ?, ?, ?, 'free')`
+        `INSERT INTO users (id, kakao_id, nickname, name, phone, plan) VALUES (?, ?, ?, ?, '', 'free')`
       ).bind(userId, kakaoId, nickname, nickname).run();
       isNew = true;
     }
