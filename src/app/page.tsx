@@ -28,11 +28,11 @@ export default function LandingPage() {
           정작 내 손에 남는 돈이 얼마인지<br />
           모르는 사장님이 대부분입니다.
         </p>
-        <Link href="/login"
+        <a href="/api/auth/kakao"
           className="block w-full mt-8 rounded-xl font-bold hover:opacity-90 transition-opacity"
           style={{ background: '#FEE500', color: '#191919', fontSize: '18px', height: '56px', lineHeight: '56px' }}>
           {"\uD83D\uDCAC"} 카카오로 무료 시작하기
-        </Link>
+        </a>
         <p className="mt-3" style={{ fontSize: '13px', color: '#9A9690' }}>
           가입 30초 · 완전 무료 · 카드 불필요
         </p>
@@ -152,6 +152,18 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* KBS비즈니스 로고 */}
+      <div style={{ textAlign: 'center', padding: '24px 20px', background: '#FFFDF7', borderTop: '1px solid #DDD8CF' }}>
+        <p style={{ fontSize: '13px', color: '#5F5E5A', marginBottom: '12px' }}>
+          KBS비즈니스가 소상공인 분들과 함께 합니다.
+        </p>
+        <img
+          src="https://i.namu.wiki/i/vigPtU4k4pvRqXkyv_DpcJJ7tlxTRBpGfnDB2eU5JYIvZ_gRqwJ8NTQRRfpy7bY1vao1L_CCt3yyB7-460mv9FZdE951vAEeE-BX6bDqGRY3RrsBr2IZC4jDUsc2Kc4JVVWRD7l-eT3bCrwCdAy_gA.svg"
+          alt="KBS비즈니스"
+          style={{ height: '40px', objectFit: 'contain' }}
+        />
+      </div>
+
       {/* [6] 한 줄 강조 */}
       <section style={{ background: '#2D5A8E' }}>
         <div className="max-w-lg mx-auto px-4 py-10 text-center">
@@ -159,11 +171,11 @@ export default function LandingPage() {
             혼자 고민하지 마세요.<br />
             숫자를 알면 길이 보입니다.
           </p>
-          <Link href="/login"
+          <a href="/api/auth/kakao"
             className="inline-block mt-6 rounded-xl font-bold hover:opacity-90 transition-opacity px-10"
             style={{ background: '#FEE500', color: '#191919', fontSize: '17px', height: '52px', lineHeight: '52px' }}>
             지금 무료로 시작하기
-          </Link>
+          </a>
         </div>
       </section>
 
