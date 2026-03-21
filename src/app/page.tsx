@@ -81,6 +81,33 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* [AI] 사장님 대화 파트너 배너 */}
+      <section className="max-w-5xl mx-auto px-4 md:px-8 pb-10 md:pb-16">
+        <Link href="/talk"
+          className="block rounded-2xl p-6 md:p-8 border transition-all hover:brightness-95 active:scale-[0.99]"
+          style={{ background: '#1C1C1E', borderColor: '#333', color: '#D8D8D8' }}>
+          <div className="md:flex md:items-center md:justify-between">
+            <div>
+              <p className="font-semibold" style={{ fontSize: '13px', color: '#7C9FCC', letterSpacing: '0.1em' }}>
+                AI PARTNER
+              </p>
+              <p className="mt-2 font-bold text-xl md:text-2xl" style={{ color: '#E8E8E8', lineHeight: '1.5' }}>
+                사장님, 오늘 하루 어떠셨어요?
+              </p>
+              <p className="mt-1" style={{ fontSize: '15px', color: '#999', lineHeight: '1.7' }}>
+                경영 고민이든, 오늘 있었던 일이든 편하게 이야기해 주세요.
+              </p>
+            </div>
+            <div className="mt-4 md:mt-0 md:ml-8 shrink-0">
+              <span className="inline-block rounded-xl px-6 py-3 font-semibold"
+                style={{ background: '#7C9FCC', color: '#fff', fontSize: '15px' }}>
+                대화 시작하기 {"\u2192"}
+              </span>
+            </div>
+          </div>
+        </Link>
+      </section>
+
       {/* [3] 공감 섹션 — PC: 가로 3열, 모바일: 세로 */}
       <section className="max-w-5xl mx-auto px-4 md:px-8 pb-10 md:pb-16">
         <h2 className="font-bold text-center mb-5 md:mb-8 text-2xl md:text-3xl" style={{ color: '#1A1A1A', lineHeight: '1.4' }}>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { isPWAInstalled } from '@/lib/push';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -11,9 +12,11 @@ interface BeforeInstallPromptEvent extends Event {
 export default function InstallBanner() {
   const [show, setShow] = useState(false);
   const promptRef = useRef<BeforeInstallPromptEvent | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (isPWAInstalled()) return;
+    if (pathname === '/talk') return;
     const d = localStorage.getItem('install_banner_dismissed');
     if (d && (Date.now() - new Date(d).getTime()) / 86400000 < 7) return;
 
