@@ -306,7 +306,9 @@ export default function TalkPage() {
                       }),
                 }}
               >
-                {msg.text || (streaming && i === messages.length - 1 ? (
+                {msg.text ? (
+                  <span dangerouslySetInnerHTML={{ __html: msg.text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') }} />
+                ) : (streaming && i === messages.length - 1 ? (
                   <span className="inline-flex gap-1.5 py-1">
                     <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: T.textDim, animationDelay: '0ms' }} />
                     <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: T.textDim, animationDelay: '150ms' }} />
